@@ -1,1 +1,501 @@
+:root {
+    --primary: #f84464;
+    --text-main: #222222;
+    --text-muted: #666666;
+    --border: #e0e0e0;
+    --bg-light: #f4f4f5;
+    --seat-avail: #28a745;
+    --seat-locked: #ffc107;
+    --seat-booked: #dc3545;
+    --purple: #351c4f;
+}
 
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+body { background-color: #f4f4f5; color: var(--text-main); -webkit-font-smoothing: antialiased; }
+
+/* Mobile Container */
+.mobile-layout { max-width: 500px; margin: 0 auto; background: #fff; min-height: 100vh; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+
+/* Standard Header */
+.bms-header { display: flex; align-items: center; justify-content: space-between; padding: 16px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: #fff; z-index: 100; }
+.header-left { display: flex; align-items: center; gap: 16px; width: 85%; }
+.back-icon { font-size: 28px; font-weight: 300; cursor: pointer; color: #333; line-height: 1; }
+.bms-header h1 { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.truncate-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+
+/* Buttons & Utilities */
+.btn-primary { background: var(--primary); color: #fff; border: none; padding: 14px 24px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; transition: 0.2s; }
+.bms-main { padding: 16px 0; }
+
+/* Index Styles */
+.hero-section { padding: 0 16px; position: relative; margin-bottom: 16px; }
+.hero-banner { width: 100%; border-radius: 8px; object-fit: cover; }
+.tag-badge { position: absolute; bottom: 8px; left: 24px; background: rgba(30,34,43,0.9); color: #fff; font-size: 10px; padding: 4px 8px; border-radius: 4px; }
+.season-info { padding: 0 16px; font-size: 12px; font-weight: 500; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.interest-box { margin: 0 16px 24px; border: 1px solid var(--border); border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center; background: #fff; }
+.interest-left { display: flex; gap: 10px; align-items: flex-start; }
+.interest-left strong { font-size: 13px; color: #28a745; display: block; }
+.interest-left p { font-size: 10px; color: var(--text-muted); margin-top:2px; max-width: 180px; }
+.interested-btn { border: 1px solid var(--primary); background: #fff5f7; color: var(--primary); font-size: 12px; padding: 6px 12px; border-radius: 16px; cursor: pointer; font-weight: 500; }
+.teams-section { padding: 0 0 24px 16px; border-bottom: 8px solid var(--bg-light); }
+.teams-section h3 { font-size: 14px; margin-bottom: 12px; font-weight: 600; }
+.teams-scroll { display: flex; gap: 12px; overflow-x: auto; padding-right: 16px; scrollbar-width: none; }
+.teams-scroll::-webkit-scrollbar { display: none; }
+.team-card { min-width: 140px; padding: 8px 12px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; font-size: 9px; font-weight: 700; color: #333; }
+.team-card img { width: 30px; height: 30px; object-fit: contain; }
+.bg-gt { background: linear-gradient(to right, #e0eeff, #b3d4ff); }
+.bg-kkr { background: linear-gradient(to right, #f2e6ff, #d9b3ff); }
+.bg-lsg { background: linear-gradient(to right, #ffebe0, #ffc299); }
+.bg-mi { background: linear-gradient(to right, #e0ffff, #99ffff); }
+.events-header { padding: 24px 16px 16px; display: flex; justify-content: space-between; align-items: center; background-color: #f5f5f5; border-top: 1px solid #eee; }
+.events-header h3 { font-size: 16px; font-weight: 600; }
+.event-filters { display: flex; gap: 8px; align-items: center; }
+.filter-pill { border: 1px solid var(--border); border-radius: 16px; padding: 6px 12px; font-size: 12px; background: #fff; outline: none; }
+.filter-icon { width: 30px; height: 30px; border: 1px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #666; }
+.timeline-container { padding: 0 16px 24px; display: flex; flex-direction: column; position: relative; background-color: #f5f5f5; }
+.timeline-row { display: flex; gap: 0; margin-bottom: 16px; position: relative; cursor: pointer; background: #ffffff; border: 1px solid #eaeaea; border-radius: 12px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03); overflow: hidden; }
+.timeline-row::before { display: none; }
+.timeline-row:last-child::before { display: none; }
+.timeline-left { min-width: 85px; flex-shrink: 0; background: transparent; border: none; border-right: 1px dashed #e0e0e0; border-radius: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px 8px; text-align: center; z-index: 1; }
+.timeline-left .date-val { font-size: 20px; font-weight: 800; color: #000; line-height: 1.1; }
+.timeline-left .month-val { font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase; margin-top: 4px; }
+.timeline-left .day-val { font-size: 11px; color: #888; text-transform: uppercase; margin-top: 2px; }
+.timeline-left .city-val { font-size: 10px; color: #888; margin-top: 6px; font-weight: 500; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border: none; padding-top: 0; }
+.timeline-right { flex-grow: 1; border: none; border-radius: 0; padding: 16px; background: transparent; box-shadow: none; width: 100%; position: relative; }
+.match-label { font-size: 10px; color: var(--text-muted); margin-bottom: 12px; }
+.teams-vs-ui { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.team-ui { display: flex; flex-direction: column; align-items: center; width: 40%; text-align: center; }
+.team-ui img { width: 36px; height: 36px; object-fit: contain; margin-bottom: 8px; border-radius: 50%; border: 1px solid #f0f0f0; padding: 2px; }
+.team-ui span { font-size: 10px; font-weight: 500; line-height: 1.2; }
+.vs-circle { width: 24px; height: 24px; background: var(--bg-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #888; }
+.venue-time { font-size: 10px; color: var(--text-muted); margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #f0f0f0; }
+.action-link { font-size: 11px; font-weight: 600; color: var(--primary); }
+
+/* Event Details UI */
+.event-details-list { padding: 16px; display: flex; flex-direction: column; gap: 14px; font-size: 13px; color: #444; border-bottom: 8px solid var(--bg-light); }
+.event-details-list div { display: flex; align-items: center; gap: 12px; }
+.event-details-list svg { color: #666; flex-shrink: 0; }
+.explore-banner { margin: 16px; padding: 12px; background: #f5f8fa; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600; border: 1px solid #e1e8ed; }
+.limit-info-bar { padding: 16px; font-size: 12px; background: #fffbe6; color: #8a6d3b; display: flex; align-items: center; gap: 8px; border-bottom: 8px solid var(--bg-light); }
+.about-section { padding: 24px 16px; border-bottom: 8px solid var(--bg-light); }
+.about-section h3 { font-size: 15px; font-weight: 600; margin-bottom: 10px; }
+.about-section p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+.read-more { color: var(--primary); font-weight: 500; cursor: pointer; }
+.tnc-link { padding: 20px 16px; display: flex; justify-content: space-between; font-size: 14px; font-weight: 500; border-bottom: 8px solid var(--bg-light); cursor: pointer; }
+
+/* Sticky Footer (Event & Seats) */
+.sticky-footer { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 12px 16px; box-shadow: 0 -2px 10px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: space-between; z-index: 50; max-width: 500px; margin: 0 auto; border-top: 1px solid var(--border); }
+.price-info { display: flex; flex-direction: column; }
+.price-info .price { font-size: 16px; font-weight: 700; color: var(--text-main); }
+.price-info .status { font-size: 11px; color: #d68100; font-weight: 600; margin-top: 2px; }
+.book-now-btn { background: var(--primary); color: #fff; border: none; padding: 12px 32px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+
+/* Modal (T&C) */
+.modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
+.modal.active { display: flex; }
+.modal-content { background: #fff; padding: 24px; border-radius: 12px; width: 90%; max-width: 400px; max-height: 80vh; overflow-y: auto; }
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.tnc-box h3 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+.tnc-list p { font-size: 13px; color: #555; margin-bottom: 12px; line-height: 1.5; }
+
+/* Seats - QTY View */
+.timer-banner { background: var(--purple); color: #fff; font-size: 12px; text-align: center; padding: 10px; }
+.stadium-bg { height: 160px; background: url('https://in.bmscdn.com/m6/images/venue-maps/wankhede-stadium-mumbai-map.jpg') center top; background-size: cover; opacity: 0.8; }
+.qty-container { background: #fff; margin-top: -20px; border-radius: 20px 20px 0 0; position: relative; padding: 24px 16px; text-align: center; height: calc(100vh - 250px); }
+.qty-container h2 { font-size: 18px; font-weight: 600; margin-bottom: 10px; color: #333; }
+.qty-bubbles { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 24px 0; }
+.qty-bubble { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; color: #333; cursor: pointer; transition: 0.2s; border:1px solid #eee; }
+.qty-bubble.active { background: var(--primary); color: #fff; font-weight: 600; border-color:var(--primary); }
+.info-pill { background: #f4f4f5; display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 20px; font-size: 12px; color: #666; margin-bottom: 40px; }
+.bottom-fixed-btn { padding: 16px; position: absolute; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid var(--border); }
+
+/* Seats Grid View */
+.seat-legend { display: flex; justify-content: center; gap: 20px; padding: 20px 0; font-size: 13px; color: var(--text-muted); }
+.legend-item { display: flex; align-items: center; gap: 8px; }
+.seat { width: 24px; height: 24px; border-radius: 4px 4px 8px 8px; cursor: pointer; transition: 0.2s; position: relative; border: 1px solid rgba(0,0,0,0.1); }
+.seat::after { content: ''; position: absolute; bottom: 4px; left: 4px; right: 4px; height: 4px; background: rgba(0,0,0,0.1); border-radius: 2px; }
+.seat.available { background-color: var(--seat-avail); }
+.seat.locked { background-color: var(--seat-locked); }
+.seat.booked { background-color: var(--seat-booked); cursor: not-allowed; opacity: 0.6; }
+.screen-indicator { text-align: center; margin: 20px 0 40px; }
+.screen-curve { height: 20px; border-top: 3px solid var(--border); border-radius: 50% 50% 0 0 / 100% 100% 0 0; width: 80%; margin: 0 auto 10px; }
+.screen-indicator span { font-size: 12px; letter-spacing: 2px; color: var(--text-muted); }
+.seat-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 10px; justify-content: center; padding-bottom: 100px; max-width: 400px; margin: 0 auto; }
+.seat-grid > :nth-child(5n) { margin-right: 20px; }
+
+/* General Footer */
+.breadcrumbs { padding: 16px; font-size: 9px; color: #888; border-bottom: 1px solid var(--border); background: #fff;}
+.bms-footer { background: #333; color: #fff; padding: 32px 16px; text-align: center; }
+.footer-logo { font-size: 20px; font-weight: 700; margin-bottom: 10px; }
+.footer-logo span { color: var(--primary); }
+.copyright { font-size: 9px; color: #aaa; }
+.success-icon { width: 64px; height: 64px; background: var(--seat-avail); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 16px; }
+
+/* Admin Global Overrides */
+.admin-body { max-width: 100%; margin: 0; }
+.admin-nav { background: var(--primary); padding: 16px 0; color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.admin-container { display: grid; grid-template-columns: 1fr 2fr; gap: 24px; margin-top: 24px; padding-bottom: 40px; padding: 16px;}
+@media(max-width: 768px) { .admin-container { grid-template-columns: 1fr; } }
+.admin-card { background: #fff; padding: 24px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.form-group { margin-bottom: 16px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-muted); }
+.form-group input { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; }
+.table-responsive { overflow-x: auto; }
+#admin-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+#admin-table th, #admin-table td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
+.action-btn { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 4px; font-weight:bold;}
+.btn-edit { background: #17a2b8; color: #fff; }
+.btn-delete { background: var(--primary); color: #fff; }
+.btn-secondary { background: #555; color: #fff; border: none; padding: 14px 24px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; transition: 0.2s; }
+.loading { text-align: center; padding: 40px; color: var(--text-muted); font-size: 14px; }
+
+
+/* ================= EVENT PAGE MOBILE FIX ================= */
+
+#event-container img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+/* Interest box spacing fix */
+.interest-box {
+    margin: 12px 16px;
+}
+
+/* Details section compact */
+.event-details-list {
+    padding: 12px 16px;
+    gap: 10px;
+    font-size: 13px;
+}
+
+/* Explore banner */
+.explore-banner {
+    margin: 12px 16px;
+    padding: 10px;
+    font-size: 12px;
+}
+
+/* About */
+.about-section {
+    padding: 16px;
+}
+
+.about-section h3 {
+    font-size: 15px;
+}
+
+.about-section p {
+    font-size: 13px;
+}
+
+/* Limit bar */
+.limit-info-bar {
+    padding: 12px 16px;
+    font-size: 12px;
+}
+
+/* TNC link */
+.tnc-link {
+    padding: 14px 16px;
+    font-size: 14px;
+}
+
+/* ================= POPUP (PRO STYLE) ================= */
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.modal.active {
+    display: flex;
+}
+
+/* Popup box */
+.tnc-popup {
+    background: #fff;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 12px;
+    padding: 20px;
+    animation: popupFade 0.25s ease;
+}
+
+/* Header */
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.popup-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* Close icon */
+#close-popup {
+    font-size: 20px;
+    cursor: pointer;
+    color: #888;
+}
+
+/* Scroll content */
+.tnc-scroll {
+    max-height: 250px;
+    overflow-y: auto;
+    margin: 16px 0;
+}
+
+.tnc-scroll p {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+/* Button */
+.tnc-btn {
+    width: 100%;
+    background: #f84464;
+    color: #fff;
+    border: none;
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Animation */
+@keyframes popupFade {
+    from {
+        transform: translateY(40px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* ================= MOBILE PERFECT FIX ================= */
+
+@media (max-width: 600px) {
+
+    body {
+        padding-bottom: 90px;
+    }
+
+    .sticky-footer {
+        max-width: 100%;
+        border-radius: 0;
+    }
+
+    .book-now-btn {
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+
+    .price-info .price {
+        font-size: 15px;
+    }
+
+    .price-info .status {
+        font-size: 11px;
+    }
+}
+
+/* PERFECT CENTER */
+.qty-container {
+    text-align: center;
+    padding: 24px 16px;
+}
+
+/* TITLE */
+.qty-container h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+/* IMAGE */
+.cycle-img img {
+    width: 180px;
+    margin: 20px auto;
+    display: block;
+}
+
+/* BUBBLES */
+.qty-bubbles {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 24px 0;
+}
+
+.qty-bubble {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.qty-bubble.active {
+    background: #f84464;
+    color: #fff;
+}
+
+/* INFO */
+.info-pill {
+    background: #eee;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    display: inline-block;
+}
+
+/* BUTTON */
+.bottom-fixed-btn {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    max-width: 500px;
+    padding: 16px;
+    background: #fff;
+}
+
+.btn-primary {
+    width: 100%;
+    background: #f84464;
+    color: #fff;
+    padding: 14px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+}
+
+/* ================= SEAT POPUP (BOOKMYSHOW STYLE) ================= */
+
+.seat-popup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 9999;
+    display: none;
+}
+
+.seat-popup.active {
+    display: block;
+}
+
+/* POPUP TOP STADIUM BG */
+.seat-popup::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 200px;
+    background: url('https://in.bmscdn.com/m6/images/venue-maps/wankhede-stadium-mumbai-map.jpg') center;
+    background-size: cover;
+    filter: brightness(0.5);
+}
+
+/* TIMER BAR */
+.seat-popup .timer-banner {
+    position: relative;
+    z-index: 2;
+}
+
+/* MAIN WHITE CARD */
+.popup-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-radius: 20px 20px 0 0;
+    padding: 24px 16px 100px;
+    text-align: center;
+    z-index: 2;
+}
+
+/* TITLE */
+.popup-content h2 {
+    font-size: 20px;
+    margin-bottom: 16px;
+}
+
+/* VEHICLE IMAGE */
+.popup-img {
+    width: 180px;
+    margin: 20px auto;
+    display: block;
+    transition: 0.2s;
+}
+
+/* BUBBLES PERFECT CENTER */
+.popup-content .qty-bubbles {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 24px 0;
+}
+
+/* ACTIVE RED */
+.popup-content .qty-bubble.active {
+    background: #f84464;
+    color: #fff;
+}
+
+/* INFO PILL */
+.popup-content .info-pill {
+    margin-bottom: 20px;
+}
+
+/* FIX BUTTON INSIDE POPUP */
+#confirm-btn {
+    position: absolute;
+    bottom: 20px;
+    left: 16px;
+    right: 16px;
+}
+
+
+/* ================= VENUE PAGE ================= */
+
+.venue-container img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+/* HIDE BODY SCROLL WHEN POPUP */
+body.popup-open {
+    overflow: hidden;
+}
+
+
+/* ================= MOBILE PERFECT ================= */
+
+@media (max-width: 600px) {
+
+    .popup-content {
+        padding-bottom: 110px;
+    }
+
+    #confirm-btn {
+        bottom: 16px;
+    }
+             }
+    
