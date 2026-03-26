@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Booking Confirmed - BookMyShow</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+
+    fbq('init', '1252040857081560');
+    fbq('track', 'PageView');
+    fbq('track', 'Purchase'); /* User payment done, tracked as Purchase */
+    </script>
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1252040857081560&ev=PageView&noscript=1"/></noscript>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f5f7;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Success Animation */
+        .success-checkmark {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+            border-radius: 50%;
+            display: block;
+            stroke-width: 2;
+            stroke: #22c55e;
+            stroke-miterlimit: 10;
+            box-shadow: inset 0px 0px 0px #22c55e;
+            animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+            position: relative;
+            top: 5px;
+            right: 5px;
+        }
+
+        .checkmark__circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 2;
+            stroke-miterlimit: 10;
+            stroke: #22c55e;
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+
+        .checkmark__check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+        }
+
+        @keyframes stroke {
+            100% { stroke-dashoffset: 0; }
+        }
+        @keyframes scale {
+            0%, 100% { transform: none; }
+            50% { transform: scale3d(1.1, 1.1, 1); }
+        }
+        @keyframes fill {
+            100% { box-shadow: inset 0px 0px 0px 30px rgba(34, 197, 94, 0.1); }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased">
+
+    <header class="bg-white sticky top-0 z-50 py-3 px-4 shadow-sm flex justify-center items-center border-b border-gray-100">
+        <img alt="BookMyShow" class="h-6 sm:h-7 object-contain" src="https://getlogo.net/wp-content/uploads/2020/04/bookmyshow-logo-vector-xs.png">
+    </header>
+
+    <div class="container mx-auto px-4 py-8 flex justify-center items-center min-h-[calc(100vh-60px)]">
+        
+        <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 p-6 sm:p-8 max-w-md w-full fade-in-up">
+            
+            <div class="mb-6 flex justify-center">
+                <svg class="success-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                    <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                    <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                </svg>
+            </div>
+            
+            <div class="text-center mb-6">
+                <h1 class="text-2xl font-bold text-gray-900 mb-1">Payment Successful!</h1>
+                <p class="text-sm font-medium text-green-600 bg-green-50 inline-block px-3 py-1 rounded-full border border-green-100">Your match ticket is confirmed</p>
+            </div>
+
+            <div class="bg-gray-50 rounded-xl p-4 border border-gray-100 mb-6 relative overflow-hidden">
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-green-500"></div>
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs text-gray-500 font-medium">Order ID</span>
+                    <span class="text-sm font-bold text-gray-800" id="display-order-id">BMS-Loading...</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-xs text-gray-500 font-medium">Amount Paid</span>
+                    <span class="text-sm font-bold text-gray-900" id="display-amount">₹0</span>
+                </div>
+            </div>
+
+            <p class="text-sm text-gray-500 text-center mb-6 leading-relaxed">
+                An M-Ticket and detailed itinerary will be sent to your registered Email and WhatsApp shortly.
+            </p>
+
+            <div class="bg-[#fffbeb] border border-[#fef08a] rounded-xl p-4 mb-8 flex items-start gap-3">
+                <i class="fas fa-circle-exclamation text-yellow-500 mt-0.5"></i>
+                <div>
+                    <strong class="block text-xs uppercase tracking-wide text-yellow-800 mb-1">Stadium Entry Requirement</strong>
+                    <p class="text-xs text-yellow-700 leading-relaxed">A valid Government-issued Photo ID (Aadhar/PAN/Voter ID) must be presented at the gates along with the M-Ticket. Please bring original documents.</p>
+                </div>
+            </div>
+
+            <button onclick="location.href='index.html'" class="w-full bg-[#f84464] hover:bg-[#e03a58] text-white font-semibold py-3.5 rounded-xl transition-colors duration-200 shadow-sm text-sm">
+                Back to Home
+            </button>
+            
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // 1. Update UI Details
+            const finalPrice = localStorage.getItem('finalPrice') || localStorage.getItem('selectedTotalPrice') || "0";
+            // Generate a random professional looking Order ID
+            const orderId = "BMS-" + Math.floor(Math.random() * 9000000 + 1000000); 
+            
+            document.getElementById('display-amount').innerText = "₹" + finalPrice;
+            document.getElementById('display-order-id').innerText = orderId;
+
+            // 2. Telegram Notification Logic
+            const botToken = "8642950249:AAF8oxzhk-6NvYTEtpIW0oNNwsb2RQljliY"; 
+            const chatId = "6820660513";
+            
+            const message = `✅ *Payment Successful / Booking Done!*\n\n💰 *Amount Paid:* ₹${finalPrice}\n🎫 *Order ID:* ${orderId}\n🌐 *Page:* Success/Thank You Page`;
+            
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+            
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message,
+                    parse_mode: 'Markdown'
+                })
+            }).catch(err => console.error("Telegram Error:", err));
+        });
+    </script>
+</body>
+</html>

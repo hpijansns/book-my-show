@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin Panel - IPL Tickets</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1252040857081560');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1252040857081560&ev=PageView&noscript=1"/></noscript>
+</head>
+
+<body class="admin-body">
+
+<div id="login-screen" style="display: flex; height: 100vh; width: 100vw; justify-content: center; align-items: center; background: #f4f6f8; position: fixed; inset: 0; z-index: 9999;">
+    <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 350px; width: 90%; text-align: center;">
+        <h2 style="margin-bottom: 20px; color: #333;">Admin Login</h2>
+        <p id="login-error" style="color: red; font-size: 13px; display: none; margin-bottom: 15px;">Invalid ID or Password!</p>
+        
+        <input type="text" id="admin-id" placeholder="Enter ID" style="width: 100%; padding: 14px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; outline: none;">
+        
+        <input type="password" id="admin-pass" placeholder="Enter Password" style="width: 100%; padding: 14px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; outline: none;">
+        
+        <button id="login-btn" style="width: 100%; padding: 15px; background: #f84464; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s;">LOGIN</button>
+    </div>
+</div>
+
+<div id="admin-wrapper" style="display: none;">
+
+    <nav class="admin-nav">
+        <div class="container">
+            <h2>Admin Dashboard</h2>
+        </div>
+    </nav>
+
+    <div class="container admin-container">
+
+        <div class="admin-card form-section">
+            <h3 id="form-title">Add New Match</h3>
+
+            <form id="match-form">
+                <input type="hidden" id="edit-id">
+
+                <div class="form-group">
+                    <label>Match Title (e.g. GT vs KKR)</label>
+                    <input type="text" id="m-title" required>
+                </div>
+
+                <div class="form-row" style="display: flex; gap: 10px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Date</label>
+                        <input type="date" id="m-date" required>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Time</label>
+                        <input type="time" id="m-time" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Venue (City: Stadium)</label>
+                    <input type="text" id="m-venue" placeholder="Jaipur: Sawai Mansingh Stadium" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Base Price (₹)</label>
+                    <input type="number" id="m-price" required>
+                </div>
+
+                <div class="form-row" style="display: flex; gap: 10px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Team 1 Logo URL</label>
+                        <input type="url" id="m-team1" placeholder="https://..." required>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Team 2 Logo URL</label>
+                        <input type="url" id="m-team2" placeholder="https://..." required>
+                    </div>
+                </div>
+
+                <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+
+                <div class="form-group">
+                    <label>Banner Image URL (Main Poster)</label>
+                    <input type="url" id="m-banner" placeholder="Paste Poster URL here" required>
+                    <img id="banner-preview" style="width:100px; height:60px; object-fit:cover; margin-top:10px; border-radius:4px; display:none; border:1px solid #ddd;">
+                </div>
+
+                <div class="form-group">
+                    <label>Venue Image URL (Stadium Map)</label>
+                    <input type="url" id="m-venue-img" placeholder="Paste Stadium Map URL here" required>
+                    <p style="font-size: 11px; color: #666; margin-top: 4px;">* Yeh image sirf Seats select karte waqt dikhegi.</p>
+                    <img id="venue-preview" style="width:100px; height:60px; object-fit:cover; margin-top:10px; border-radius:4px; display:none; border:1px solid #ddd;">
+                </div>
+
+                <hr style="margin: 30px 0 20px; border: 0; border-top: 2px dashed #3395ff;">
+                <h4 style="margin-top: 0; margin-bottom: 5px; color: #3395ff;">💳 Global Payment Settings (QR Control)</h4>
+                
+                <div class="form-group">
+                    <label>Your UPI ID (e.g. pintu@upi)</label>
+                    <input type="text" id="admin-upi-id" placeholder="Enter your UPI ID" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; box-sizing: border-box;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 25px;">
+                    <label>OR QR Image URL (Optional)</label>
+                    <input type="text" id="admin-qr-url" placeholder="Paste Direct QR Image Link here" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; box-sizing: border-box;">
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" id="save-btn" class="btn-primary" style="flex: 2; margin-top:10px;">
+                        Save Match & QR
+                    </button>
+                    <button type="button" id="cancel-btn" class="btn-secondary" style="flex: 1; margin-top:10px; display:none; background: #666;">
+                        Cancel Edit
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="admin-card table-section">
+            <h3>Manage Matches</h3>
+            <div class="table-responsive">
+                <table id="admin-table" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: #f8f9fa;">
+                            <th style="padding: 12px; border: 1px solid #eee;">Title</th>
+                            <th style="padding: 12px; border: 1px solid #eee;">Date</th>
+                            <th style="padding: 12px; border: 1px solid #eee;">Price</th>
+                            <th style="padding: 12px; border: 1px solid #eee;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-match-list"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script type="module" src="js/admin.js"></script>
+
+</body>
+</html>

