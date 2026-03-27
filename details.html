@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Enter Details - IPL Tickets</title>
 
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <script>
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -25,7 +28,11 @@
     </noscript>
 
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f6f8; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; box-sizing: border-box;}
+        /* Body Layout Updated to Keep Form in Center and Footer at Bottom */
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f6f8; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; box-sizing: border-box;}
+        
+        .main-wrapper { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        
         .details-box { background: #fff; max-width: 400px; width: 100%; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); padding: 30px; box-sizing: border-box; }
         .header { text-align: center; border-bottom: 2px dashed #eee; padding-bottom: 20px; margin-bottom: 25px; }
         .header h2 { margin: 0; color: #333; font-size: 22px; font-weight: 800; }
@@ -37,42 +44,85 @@
         .btn-proceed { width: 100%; padding: 16px; background: #3395ff; color: #fff; border: none; border-radius: 8px; font-weight: 700; font-size: 15px; margin-top: 10px; cursor: pointer; transition: 0.3s; letter-spacing: 0.5px; }
         .btn-proceed:hover { background: #287ce6; box-shadow: 0 5px 15px rgba(51, 149, 255, 0.3); }
         .summary { background: #f8f9fa; padding: 12px; border-radius: 6px; display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 20px; font-size: 15px; color: #333;}
+
+        /* 🔥 OFFICIAL BMS FOOTER CSS 🔥 */
+        .official-footer-container { font-family: 'Inter', sans-serif; width: 100%; margin-top: auto; }
+        .know-more-section { background-color: #f2f2f2; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; color: #888888; font-size: 13px; font-weight: 500; }
+        .main-official-footer { background-color: #333333; padding: 40px 20px; text-align: center; }
+        .logo-bms-center { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 35px; }
+        .logo-bms-center::before, .logo-bms-center::after { content: ''; flex: 1; height: 1px; background-color: #555555; max-width: 100px; }
+        #dynamic-footer-logo { height: 42px !important; width: auto; display: none; object-fit: contain; }
+        .bms-social-strip { display: flex; justify-content: center; gap: 12px; margin-bottom: 30px; }
+        .bms-social-icon { display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background-color: #555555; color: #aaaaaa; border-radius: 50%; text-decoration: none; font-size: 18px; transition: opacity 0.2s; }
+        .bms-social-icon:hover { opacity: 0.8; }
+        .footer-official-text { color: #888888; font-size: 11px; line-height: 1.6; margin: 0 auto; max-width: 95%; }
     </style>
 </head>
 <body>
 
-    <div class="details-box">
-        <div class="header">
-            <h2>Contact Details</h2>
-            <p>Please enter details for E-Ticket & Physical Delivery</p>
-        </div>
+    <div class="main-wrapper">
+        <div class="details-box">
+            <div class="header">
+                <h2>Contact Details</h2>
+                <p>Please enter details for E-Ticket & Physical Delivery</p>
+            </div>
 
-        <div class="summary">
-            <span>Total Payable:</span>
-            <span id="display-price" style="color: #3395ff;">₹0</span>
-        </div>
+            <div class="summary">
+                <span>Total Payable:</span>
+                <span id="display-price" style="color: #3395ff;">₹0</span>
+            </div>
 
-        <form id="details-form">
-            <div class="form-group">
-                <label>Full Name <span style="color:#f84464;">*</span></label>
-                <input type="text" id="u-name" placeholder="Enter your full name" required>
-            </div>
-            <div class="form-group">
-                <label>Email Address <span style="color:#f84464;">*</span></label>
-                <input type="email" id="u-email" placeholder="ticket@example.com" required>
-            </div>
-            <div class="form-group">
-                <label>Mobile Number <span style="color:#f84464;">*</span></label>
-                <input type="tel" id="u-phone" placeholder="10-digit mobile number" pattern="[0-9]{10}" required title="Please enter a valid 10 digit number">
-            </div>
-            <div class="form-group">
-                <label>Delivery Address (For Dak/Post) <span style="color:#f84464;">*</span></label>
-                <textarea id="u-address" rows="3" placeholder="House No, Street, City, PIN Code" required></textarea>
-            </div>
-            <button type="submit" class="btn-proceed" id="submit-btn">Proceed to Payment</button>
-        </form>
+            <form id="details-form">
+                <div class="form-group">
+                    <label>Full Name <span style="color:#f84464;">*</span></label>
+                    <input type="text" id="u-name" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Address <span style="color:#f84464;">*</span></label>
+                    <input type="email" id="u-email" placeholder="ticket@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Mobile Number <span style="color:#f84464;">*</span></label>
+                    <input type="tel" id="u-phone" placeholder="10-digit mobile number" pattern="[0-9]{10}" required title="Please enter a valid 10 digit number">
+                </div>
+                <div class="form-group">
+                    <label>Delivery Address (For Dak/Post) <span style="color:#f84464;">*</span></label>
+                    <textarea id="u-address" rows="3" placeholder="House No, Street, City, PIN Code" required></textarea>
+                </div>
+                <button type="submit" class="btn-proceed" id="submit-btn">Proceed to Payment</button>
+            </form>
+        </div>
     </div>
 
+    <footer class="official-footer-container">
+        <div class="know-more-section">
+            <span>Know more about BookMyShow</span>
+            <span style="font-size: 20px; line-height: 1;">+</span>
+        </div>
+
+        <div class="main-official-footer">
+            <div class="logo-bms-center">
+                <img id="dynamic-footer-logo" src="" alt="Logo">
+            </div>
+            
+            <div class="bms-social-strip">
+                <a href="#" class="bms-social-icon"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="bms-social-icon"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="#" class="bms-social-icon"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="bms-social-icon"><i class="fab fa-youtube"></i></a>
+                <a href="#" class="bms-social-icon"><i class="fab fa-pinterest-p"></i></a>
+                <a href="#" class="bms-social-icon"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+            
+            <p class="footer-official-text" style="margin-bottom: 15px;">
+                Copyright 2026 ©Bigtree Entertainment Pvt. Ltd. All Rights Reserved.
+            </p>
+            
+            <p class="footer-official-text">
+                The content and images used on this site are copyright protected and copyrights vests with the respective owners. The usage of the content and images on this website is intended to promote the works and no endorsement of the artist shall be implied. Unauthorized use is prohibited and punishable by law.
+            </p>
+        </div>
+    </footer>
     <script>
         const finalPrice = localStorage.getItem('finalPrice') || 0;
         const selectedMatch = JSON.parse(localStorage.getItem('selectedMatch')) || {};
@@ -135,5 +185,21 @@
             }, 1500);
         });
     </script>
+
+    <script type="module">
+        import { db, ref, onValue } from './firebase.js';
+        onValue(ref(db, 'settings/payment'), (snap) => {
+            if (snap.exists()) {
+                const settings = snap.val();
+                const globalFooterLogo = settings.globalFooterLogo || '';
+                const footerLogoImg = document.getElementById('dynamic-footer-logo');
+                if (footerLogoImg && globalFooterLogo.trim() !== "") {
+                    footerLogoImg.src = globalFooterLogo;
+                    footerLogoImg.style.display = 'block';
+                }
+            }
+        });
+    </script>
+
 </body>
 </html>
