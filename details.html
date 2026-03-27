@@ -187,7 +187,8 @@
     </script>
 
     <script type="module">
-        import { db, ref, onValue } from './firebase.js';
+        import { db, ref, onValue } from './js/firebase.js';
+        
         onValue(ref(db, 'settings/payment'), (snap) => {
             if (snap.exists()) {
                 const settings = snap.val();
