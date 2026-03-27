@@ -75,12 +75,12 @@
         }
         #lead-error { color: #ef4444; font-size: 12px; text-align: center; margin-top: 5px; font-weight: 600; display: none;}
 
-        /* 🔥 VIP FOOTER CSS 🔥 */
-        .vip-footer-container {
+        /* 🔥 OFFICIAL BMS FOOTER CSS (No bright white) 🔥 */
+        .official-footer-container {
             font-family: 'Inter', sans-serif;
             margin-top: 30px;
         }
-        .know-more-strip {
+        .know-more-section {
             background-color: #f2f2f2;
             padding: 16px 20px;
             display: flex;
@@ -90,57 +90,54 @@
             font-size: 13px;
             font-weight: 500;
         }
-        .main-footer {
+        .main-official-footer {
             background-color: #333333;
             padding: 40px 20px;
             text-align: center;
         }
-        .logo-container {
+        .logo-bms-center {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 15px;
             margin-bottom: 35px;
         }
-        .logo-container::before,
-        .logo-container::after {
+        .logo-bms-center::before,
+        .logo-bms-center::after {
             content: '';
             flex: 1;
             height: 1px;
             background-color: #555555;
-            max-width: 100px; /* Adjust line length */
+            max-width: 100px;
         }
-        .social-icons-wrapper {
+        .bms-social-strip {
             display: flex;
             justify-content: center;
             gap: 12px;
             margin-bottom: 30px;
         }
-        .social-icon-btn {
+        .bms-social-icon {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 44px;
-            height: 44px;
-            background-color: #555555; /* Dull Grey Background */
-            color: #999999; /* Dull Grey Icon */
+            width: 42px;
+            height: 42px;
+            background-color: #555555; /* Dull Grey Circle */
+            color: #aaaaaa; /* Dull Grey Icon */
             border-radius: 50%;
             text-decoration: none;
             font-size: 18px;
             transition: opacity 0.2s;
         }
-        .social-icon-btn:hover {
+        .bms-social-icon:hover {
             opacity: 0.8;
         }
-        .footer-text {
+        .footer-official-text {
             color: #888888;
             font-size: 11px;
             line-height: 1.6;
             margin: 0 auto;
             max-width: 95%;
-        }
-        .footer-text.copyright {
-            margin-bottom: 12px;
         }
     </style>
 </head>
@@ -224,33 +221,33 @@
 
     </main>
 
-    <footer class="vip-footer-container">
+    <footer class="official-footer-container">
         
-        <div class="know-more-strip">
+        <div class="know-more-section">
             <span>Know more about BookMyShow</span>
             <span style="font-size: 20px; line-height: 1;">+</span>
         </div>
 
-        <div class="main-footer">
+        <div class="main-official-footer">
             
-            <div class="logo-container">
-                <img id="dynamic-footer-logo" src="" style="height: 200px; display: none; object-fit: contain;">
+            <div class="logo-bms-center">
+                <img id="dynamic-footer-logo" src="" style="height: 28px; display: none; border-radius: 2px;">
             </div>
             
-            <div class="social-icons-wrapper">
-                <a href="#" class="social-icon-btn"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" class="social-icon-btn"><i class="fa-brands fa-x-twitter"></i></a>
-                <a href="#" class="social-icon-btn"><i class="fab fa-instagram"></i></a>
-                <a href="#" class="social-icon-btn"><i class="fab fa-youtube"></i></a>
-                <a href="#" class="social-icon-btn"><i class="fab fa-pinterest-p"></i></a>
-                <a href="#" class="social-icon-btn"><i class="fab fa-linkedin-in"></i></a>
+            <div class="bms-social-strip">
+                <a href="#" class="bms-social-icon"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="bms-social-icon"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="#" class="bms-social-icon"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="bms-social-icon"><i class="fab fa-youtube"></i></a>
+                <a href="#" class="bms-social-icon"><i class="fab fa-pinterest-p"></i></a>
+                <a href="#" class="bms-social-icon"><i class="fab fa-linkedin-in"></i></a>
             </div>
             
-            <p class="footer-text copyright">
+            <p class="footer-official-text" style="margin-bottom: 15px;">
                 Copyright 2026 ©Bigtree Entertainment Pvt. Ltd. All Rights Reserved.
             </p>
             
-            <p class="footer-text">
+            <p class="footer-official-text">
                 The content and images used on this site are copyright protected and copyrights vests with the respective owners. The usage of the content and images on this website is intended to promote the works and no endorsement of the artist shall be implied. Unauthorized use is prohibited and punishable by law.
             </p>
             
