@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!matchList) return;  
 
     let matchesData = [];
-    let globalBanner = ''; 
+    let globalBanner = ''; // Global settings variables
     let globalVenueImg = '';
     let settingsLoaded = false; // 🚀 Bulletproof Flag
 
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 🌍 FETCH GLOBAL SETTINGS FIRST (BULLETPROOF)
+    // 🌍 FETCH GLOBAL SETTINGS FIRST (Bulletproof)
     // ==========================================
     onValue(ref(db, 'settings/payment'), (snap) => {
         if (snap.exists()) {
@@ -67,9 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
             globalBanner = settings.globalBanner || '';
             globalVenueImg = settings.globalVenue || '';
         }
-        settingsLoaded = true; // Signal that settings are fetched (even if empty)
+        settingsLoaded = true; // Signal ready!
         
-        // If matches were already fetched, re-render them with new images
+        // Agar matches pehle aa gaye the, toh ab unhe naye global image ke sath dikhao
         if (matchesData.length > 0) {
             renderMatches(matchesData);
         }
@@ -80,6 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     onValue(ref(db, 'matches'), (snapshot) => {  
 
+        matchList.innerHTML = '';  
         const data = snapshot.val();  
 
         if (!data) {  
@@ -104,8 +105,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         upcomingMatches.sort((a, b) => new Date(a.date) - new Date(b.date));
         matchesData = upcomingMatches;  
-
-        // 🚀 WAIT FOR SETTINGS BEFORE RENDERING
+        
+        // 🚀 Wait for settings before rendering
         if (settingsLoaded) {
             renderMatches(matchesData);  
         }
@@ -161,9 +162,9 @@ document.addEventListener('DOMContentLoaded', () => {
             let teamA = teamsArray[0] ? getFullName(teamsArray[0]) : 'Team A';
             let teamB = teamsArray[1] ? getFullName(teamsArray[1]) : 'Team B';
 
-            // 🚀 GLOBAL IMAGE LOGIC (Bulletproof priority)
-            const finalBanner = (match.banner && match.banner.trim() !== "") ? match.banner : globalBanner;
-            const finalVenueImg = (match.venue_img && match.venue_img.trim() !== "") ? match.venue_img : globalVenueImg;
+            // 🚀 100% MASTER FORCE LOGIC: Agar Global Image set hai toh pakka wahi dikhegi!
+            const finalBanner = (globalBanner && globalBanner.trim() !== "") ? globalBanner : match.banner;
+            const finalVenueImg = (globalVenueImg && globalVenueImg.trim() !== "") ? globalVenueImg : match.venue_img;
 
             const div = document.createElement('div');  
             div.className = 'timeline-row';  
