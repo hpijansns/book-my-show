@@ -74,6 +74,74 @@
             color: #94a3b8; font-weight: 600; cursor: pointer; text-decoration: underline;
         }
         #lead-error { color: #ef4444; font-size: 12px; text-align: center; margin-top: 5px; font-weight: 600; display: none;}
+
+        /* 🔥 VIP FOOTER CSS 🔥 */
+        .vip-footer-container {
+            font-family: 'Inter', sans-serif;
+            margin-top: 30px;
+        }
+        .know-more-strip {
+            background-color: #f2f2f2;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #888888;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .main-footer {
+            background-color: #333333;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 35px;
+        }
+        .logo-container::before,
+        .logo-container::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background-color: #555555;
+            max-width: 100px; /* Adjust line length */
+        }
+        .social-icons-wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        .social-icon-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background-color: #555555; /* Dull Grey Background */
+            color: #999999; /* Dull Grey Icon */
+            border-radius: 50%;
+            text-decoration: none;
+            font-size: 18px;
+            transition: opacity 0.2s;
+        }
+        .social-icon-btn:hover {
+            opacity: 0.8;
+        }
+        .footer-text {
+            color: #888888;
+            font-size: 11px;
+            line-height: 1.6;
+            margin: 0 auto;
+            max-width: 95%;
+        }
+        .footer-text.copyright {
+            margin-bottom: 12px;
+        }
     </style>
 </head>
 
@@ -156,35 +224,37 @@
 
     </main>
 
-    <footer style="background-color: #333333; color: #888888; text-align: center; padding: 40px 20px; margin-top: 30px; font-family: 'Inter', sans-serif;">
-        <img id="dynamic-footer-logo" src="" style="height: 35px; margin: 0 auto 25px auto; display: none; border-radius: 2px;">
+    <footer class="vip-footer-container">
         
-        <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 25px;">
-            <a href="#" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background-color: #ffffff; color: #333333; border-radius: 50%; text-decoration: none; font-size: 18px; transition: transform 0.2s ease;">
-                <i class="fab fa-facebook-f"></i>
-            </a>
-            <a href="#" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background-color: #ffffff; color: #333333; border-radius: 50%; text-decoration: none; font-size: 18px; transition: transform 0.2s ease;">
-                <i class="fa-brands fa-x-twitter"></i>
-            </a>
-            <a href="#" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background-color: #ffffff; color: #333333; border-radius: 50%; text-decoration: none; font-size: 18px; transition: transform 0.2s ease;">
-                <i class="fab fa-instagram"></i>
-            </a>
-            <a href="#" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background-color: #ffffff; color: #333333; border-radius: 50%; text-decoration: none; font-size: 18px; transition: transform 0.2s ease;">
-                <i class="fab fa-youtube"></i>
-            </a>
-            <a href="#" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background-color: #ffffff; color: #333333; border-radius: 50%; text-decoration: none; font-size: 18px; transition: transform 0.2s ease;">
-                <i class="fab fa-pinterest-p"></i>
-            </a>
-            <a href="#" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background-color: #ffffff; color: #333333; border-radius: 50%; text-decoration: none; font-size: 18px; transition: transform 0.2s ease;">
-                <i class="fab fa-linkedin-in"></i>
-            </a>
+        <div class="know-more-strip">
+            <span>Know more about BookMyShow</span>
+            <span style="font-size: 20px; line-height: 1;">+</span>
         </div>
-        
-        <p style="font-size: 11px; margin-bottom: 15px; font-weight: 500;">Copyright 2026 © Bigtree Entertainment Pvt. Ltd. All Rights Reserved.</p>
-        
-        <p style="font-size: 10px; line-height: 1.6; max-width: 90%; margin: 0 auto; opacity: 0.8;">
-            The content and images used on this site are copyright protected and copyrights vests with the respective owners. The usage of the content and images on this website is intended to promote the works and no endorsement of the artist shall be implied. Unauthorized use is prohibited and punishable by law.
-        </p>
+
+        <div class="main-footer">
+            
+            <div class="logo-container">
+                <img id="dynamic-footer-logo" src="" style="height: 28px; display: none; object-fit: contain;">
+            </div>
+            
+            <div class="social-icons-wrapper">
+                <a href="#" class="social-icon-btn"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="social-icon-btn"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="#" class="social-icon-btn"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-icon-btn"><i class="fab fa-youtube"></i></a>
+                <a href="#" class="social-icon-btn"><i class="fab fa-pinterest-p"></i></a>
+                <a href="#" class="social-icon-btn"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+            
+            <p class="footer-text copyright">
+                Copyright 2026 ©Bigtree Entertainment Pvt. Ltd. All Rights Reserved.
+            </p>
+            
+            <p class="footer-text">
+                The content and images used on this site are copyright protected and copyrights vests with the respective owners. The usage of the content and images on this website is intended to promote the works and no endorsement of the artist shall be implied. Unauthorized use is prohibited and punishable by law.
+            </p>
+            
+        </div>
     </footer>
     <div id="discount-modal" class="modal-overlay">
         <div class="modal-content">
