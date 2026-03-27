@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let matchesData = [];
     let globalBanner = ''; // Global settings variables
     let globalVenueImg = '';
+    let globalFooterLogo = ''; // 🚀 NEW: Footer Logo variable
     let settingsLoaded = false; // 🚀 Bulletproof Flag
 
     // ==========================================
@@ -66,6 +67,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const settings = snap.val();
             globalBanner = settings.globalBanner || '';
             globalVenueImg = settings.globalVenue || '';
+            globalFooterLogo = settings.globalFooterLogo || ''; // 🚀 Fetching Footer Logo
+            
+            // 🚀 DYNAMIC LOGO RENDER LOGIC
+            const footerLogoImg = document.getElementById('dynamic-footer-logo');
+            if (footerLogoImg && globalFooterLogo.trim() !== "") {
+                footerLogoImg.src = globalFooterLogo;
+                footerLogoImg.style.display = 'block'; // Logo milte hi show kar dega
+            }
         }
         settingsLoaded = true; // Signal ready!
         
