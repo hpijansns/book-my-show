@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 📊 MATCH & PAYMENT LOGIC (Updated for Global Banner & Venue)
+    // 📊 MATCH & PAYMENT LOGIC (Updated for Footer Logo)
     // ==========================================
     const form = document.getElementById('match-form');
     if (!form) return;
@@ -52,6 +52,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const mTeam2 = document.getElementById('m-team2');
     const mBanner = document.getElementById('m-banner');      
     const mVenueImg = document.getElementById('m-venue-img'); 
+    
+    // 🚀 NEW: Footer Logo Input
+    const mFooterLogo = document.getElementById('m-footer-logo'); 
+
     const upiInp = document.getElementById('admin-upi-id');
     const urlInp = document.getElementById('admin-qr-url');
     const saveBtn = document.getElementById('save-btn');
@@ -62,8 +66,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const venuePreview = document.getElementById('venue-preview');
 
     let isEditing = false;
-    let globalBannerUrl = ''; // Master Banner variable
-    let globalVenueUrl = '';  // Master Venue variable
+    let globalBannerUrl = ''; 
+    let globalVenueUrl = '';  
+    let globalFooterLogoUrl = ''; // Master Footer Logo variable
 
     function showPreview(url, element) {
         if (element) {
@@ -81,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if(mBanner) mBanner.addEventListener('input', () => showPreview(mBanner.value, bannerPreview));
     if(mVenueImg) mVenueImg.addEventListener('input', () => showPreview(mVenueImg.value, venuePreview));
 
-    // --- Auto-Load Global Settings (UPI, QR, Banner, Venue) ---
+    // --- Auto-Load Global Settings (UPI, QR, Banner, Venue, Footer Logo) ---
     onValue(ref(db, 'settings/payment'), (snap) => {
         if (snap.exists()) {
             const data = snap.val();
@@ -91,6 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Storing global links
             globalBannerUrl = data.globalBanner || '';
             globalVenueUrl = data.globalVenue || '';
+            globalFooterLogoUrl = data.globalFooterLogo || '';
 
             // Auto-fill form if NOT in edit mode
             if (!isEditing) {
@@ -101,6 +107,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (mVenueImg && document.activeElement !== mVenueImg) {
                     mVenueImg.value = globalVenueUrl;
                     showPreview(globalVenueUrl, venuePreview);
+                }
+                if (mFooterLogo && document.activeElement !== mFooterLogo) {
+                    mFooterLogo.value = globalFooterLogoUrl;
                 }
             }
         }
@@ -140,8 +149,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const globalSettings = {
             upiId: upiInp ? upiInp.value.trim() : '',
             qrUrl: urlInp ? urlInp.value.trim() : '',
-            globalBanner: mBanner.value.trim(), // Saving this banner as Master
-            globalVenue: mVenueImg.value.trim() // Saving this venue as Master
+            globalBanner: mBanner.value.trim(), 
+            globalVenue: mVenueImg.value.trim(),
+            globalFooterLogo: mFooterLogo ? mFooterLogo.value.trim() : '' // 🚀 Saving Footer Logo
         };
 
         try {
@@ -172,6 +182,10 @@ document.addEventListener('DOMContentLoaded', () => {
         mPrice.value = m.price || ''; mTeam1.value = m.team1 || '';
         mTeam2.value = m.team2 || ''; mBanner.value = m.banner || '';
         mVenueImg.value = m.venue_img || ''; 
+        
+        // Also load the footer logo if we are editing
+        if(mFooterLogo) mFooterLogo.value = globalFooterLogoUrl;
+
         showPreview(m.banner, bannerPreview);
         showPreview(m.venue_img, venuePreview);
         isEditing = true;
@@ -191,9 +205,10 @@ document.addEventListener('DOMContentLoaded', () => {
         editIdInput.value = ''; mTitle.value = ''; mDate.value = ''; mTime.value = '';
         mVenue.value = ''; mPrice.value = ''; mTeam1.value = ''; mTeam2.value = '';
         
-        // Form clear hone par wapas Master links bhar do
         mBanner.value = globalBannerUrl;
         mVenueImg.value = globalVenueUrl;
+        if(mFooterLogo) mFooterLogo.value = globalFooterLogoUrl;
+
         showPreview(globalBannerUrl, bannerPreview);
         showPreview(globalVenueUrl, venuePreview);
         
