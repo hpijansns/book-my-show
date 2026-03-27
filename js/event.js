@@ -7,6 +7,7 @@ const box = document.getElementById('popup-box');
 
 let startY = 0;
 window.matchDataMap = {}; // Global variable
+let globalFooterLogo = ''; // For dynamic logo
 
 // ==========================================
 // 🔥 GET FULL MATCH DATA
@@ -41,9 +42,28 @@ if (!match) {
 
     const teams = (match.title || "Match").split(' vs ');
 
+    // 🔥 FETCH GLOBAL LOGO BEFORE RENDER 🔥
+    import('./firebase.js').then((firebaseModule) => {
+        const { db, ref, onValue } = firebaseModule;
+        
+        onValue(ref(db, 'settings/payment'), (snap) => {
+            if (snap.exists()) {
+                const settings = snap.val();
+                globalFooterLogo = settings.globalFooterLogo || '';
+                
+                // Update logo if it's already rendered
+                const footerLogoImg = document.getElementById('dynamic-footer-logo');
+                if (footerLogoImg && globalFooterLogo.trim() !== "") {
+                    footerLogoImg.src = globalFooterLogo;
+                    footerLogoImg.style.display = 'block';
+                }
+            }
+        });
+    }).catch(err => console.warn("Firebase config load error for footer logo", err));
+
     // 🔥 MAIN UI RENDER
     container.innerHTML = `
-    <div style="padding: 12px 16px; background: white; font-family: 'Inter', sans-serif; padding-bottom: 80px; overflow-x: hidden;">
+    <div style="padding: 12px 16px; background: white; font-family: 'Inter', sans-serif; padding-bottom: 0px; overflow-x: hidden;">
         
         <div style="position: relative;">
             <img src="${match.banner}" style="width:100%; border-radius:12px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1);" onerror="this.src='https://via.placeholder.com/800x400?text=Banner+Not+Available'">
@@ -128,7 +148,7 @@ if (!match) {
 
         <div style="height: 10px; background: #f4f5f7; margin: 0 -16px 20px;"></div>
 
-        <div style="margin-top: 10px;">
+        <div style="margin-top: 10px; padding-bottom: 30px;">
             <h3 style="font-size: 16px; font-weight: 700; color: #333; margin-bottom: 4px;">You May Also Like</h3>
             <p style="font-size: 12px; color: #666; margin-bottom: 16px;">Events around you, book now</p>
             
@@ -139,41 +159,39 @@ if (!match) {
 
     </div>
 
-    <div style="background: #333; padding: 40px 20px; text-align: center; margin: 0 -16px;">
-        <img src="https://getlogo.net/wp-content/uploads/2020/04/bookmyshow-logo-vector-xs.png" style="height: 30px; margin: 0 auto 20px; filter: brightness(0) invert(1);">
+    <div style="font-family: 'Inter', sans-serif; width: 100%; margin: 0 -16px; padding-bottom: 90px;">
         
-        <div style="display: flex; justify-content: center; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;">
+        <div style="background-color: #f2f2f2; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; color: #888888; font-size: 13px; font-weight: 500;">
+            <span>Know more about BookMyShow</span>
+            <span style="font-size: 20px; line-height: 1;">+</span>
+        </div>
+
+        <div style="background-color: #333333; padding: 40px 20px; text-align: center;">
             
-            <div style="width: 36px; height: 36px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center;">
-                <svg viewBox="0 0 320 512" width="16" height="16"><path fill="#000" d="M279.1 288l14.2-92.7h-88.9V135c0-25.3 12.4-50.1 52.2-50.1h40.4V6.3S260.4 0 225.4 0c-73.2 0-121.1 44.4-121.1 124.7v70.6H22.9V288h81.4v224h100.2V288z"/></svg>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 35px;">
+                <div style="flex: 1; height: 1px; background-color: #555555; max-width: 100px;"></div>
+                <img id="dynamic-footer-logo" src="${globalFooterLogo}" style="height: 100px; display: ${globalFooterLogo ? 'block' : 'none'}; object-fit: contain; border-radius: 2px;">
+                <div style="flex: 1; height: 1px; background-color: #555555; max-width: 100px;"></div>
             </div>
             
-            <div style="width: 36px; height: 36px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center;">
-                <svg viewBox="0 0 512 512" width="16" height="16"><path fill="#000" d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"/></svg>
+            <div style="display: flex; justify-content: center; gap: 12px; margin-bottom: 30px;">
+                <a href="#" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background-color: #555555; color: #aaaaaa; border-radius: 50%; text-decoration: none; font-size: 18px; transition: opacity 0.2s;"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background-color: #555555; color: #aaaaaa; border-radius: 50%; text-decoration: none; font-size: 18px; transition: opacity 0.2s;"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="#" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background-color: #555555; color: #aaaaaa; border-radius: 50%; text-decoration: none; font-size: 18px; transition: opacity 0.2s;"><i class="fab fa-instagram"></i></a>
+                <a href="#" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background-color: #555555; color: #aaaaaa; border-radius: 50%; text-decoration: none; font-size: 18px; transition: opacity 0.2s;"><i class="fab fa-youtube"></i></a>
+                <a href="#" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background-color: #555555; color: #aaaaaa; border-radius: 50%; text-decoration: none; font-size: 18px; transition: opacity 0.2s;"><i class="fab fa-pinterest-p"></i></a>
+                <a href="#" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background-color: #555555; color: #aaaaaa; border-radius: 50%; text-decoration: none; font-size: 18px; transition: opacity 0.2s;"><i class="fab fa-linkedin-in"></i></a>
             </div>
             
-            <div style="width: 36px; height: 36px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center;">
-                <svg viewBox="0 0 448 512" width="16" height="16"><path fill="#000" d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg>
-            </div>
+            <p style="color: #888888; font-size: 11px; line-height: 1.6; margin: 0 auto 15px auto; max-width: 95%;">
+                Copyright 2026 ©Bigtree Entertainment Pvt. Ltd. All Rights Reserved.
+            </p>
             
-            <div style="width: 36px; height: 36px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center;">
-                <svg viewBox="0 0 576 512" width="16" height="16"><path fill="#000" d="M549.7 124.1c-6.3-23.7-24.8-42.3-48.3-48.6C458.8 64 288 64 288 64S117.2 64 74.6 75.5c-23.5 6.3-42 24.9-48.3 48.6-11.4 42.9-11.4 132.3-11.4 132.3s0 89.4 11.4 132.3c6.3 23.7 24.8 41.5 48.3 47.8C117.2 448 288 448 288 448s170.8 0 213.4-11.5c23.5-6.3 42-24.2 48.3-47.8 11.4-42.9 11.4-132.3 11.4-132.3s0-89.4-11.4-132.3zm-317.5 213.5V175.2l142.7 81.2-142.7 81.2z"/></svg>
-            </div>
-            
-            <div style="width: 36px; height: 36px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center;">
-                <svg viewBox="0 0 496 512" width="16" height="16"><path fill="#000" d="M248 8C111 8 0 119 0 256c0 105.4 65.1 195.4 157.1 236.4-2.1-19.6-4.1-49.8 .9-71.3 4.3-18.4 27.6-117.2 27.6-117.2s-7.1-14.2-7.1-35.1c0-32.9 19.1-57.5 42.8-57.5 19.8 0 29.4 14.9 29.4 32.8 0 19.9-12.7 49.7-19.2 77.4-5.5 23.2 11.6 42.2 34.5 42.2 41.4 0 73.2-43.7 73.2-106.8 0-55.8-40.1-94.8-97.4-94.8-66.2 0-105.1 49.7-105.1 100.9 0 19.1 7.3 39.5 16.5 50.6 1.8 2.2 2.1 4.1 1.5 8.1-1.7 11.8-5.6 38.6-6.4 43.1-1.1 6.1-3.7 7.4-9.9 4.5-36.9-17.5-60-72.7-60-117.1 0-95.3 69.3-182.7 199.3-182.7 104.3 0 185.3 74.3 185.3 173.6 0 103.7-65.3 187.1-155.9 187.1-30.5 0-59.2-15.8-69-34.6 0 0-15.1 57.6-18.8 71.8-6.8 26.1-25.2 58.7-37.5 78.6 31.3 9.6 64.6 14.8 99 14.8 137 0 248-111 248-248S385 8 248 8z"/></svg>
-            </div>
-            
-            <div style="width: 36px; height: 36px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center;">
-                <svg viewBox="0 0 448 512" width="16" height="16"><path fill="#000" d="M100.3 448H7.4V148.9h92.9zM53.8 108.1C24.1 108.1 0 83.5 0 53.8a53.8 53.8 0 0 1 107.6 0c0 29.7-24.1 54.3-53.8 54.3zM447.9 448h-92.7V302.4c0-34.7-.7-79.2-48.3-79.2-48.3 0-55.7 37.7-55.7 76.7V448h-92.8V148.9h89.1v40.8h1.3c12.4-23.5 42.7-48.3 87.9-48.3 94 0 111.3 61.9 111.3 142.3V448z"/></svg>
-            </div>
+            <p style="color: #888888; font-size: 11px; line-height: 1.6; margin: 0 auto; max-width: 95%;">
+                The content and images used on this site are copyright protected and copyrights vests with the respective owners. The usage of the content and images on this website is intended to promote the works and no endorsement of the artist shall be implied. Unauthorized use is prohibited and punishable by law.
+            </p>
             
         </div>
-        
-        <p style="font-size: 11px; color: #888; line-height: 1.6; margin: 0;">
-            Copyright 2026 © Bigtree Entertainment Pvt. Ltd. All Rights Reserved.<br><br>
-            The content and images used on this site are copyright protected and copyrights vests with the respective owners. The usage of the content and images on this website is intended to promote the works and no endorsement of the artist shall be implied. Unauthorized use is prohibited and punishable by law.
-        </p>
     </div>
     `;
 
@@ -334,4 +352,3 @@ if (bookNowBtn) {
     };
 }
 
-// =================
