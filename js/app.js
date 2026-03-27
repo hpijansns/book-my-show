@@ -9,8 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!matchList) return;  
 
     let matchesData = [];
-    let globalBanner = ''; // Global settings variables
+    let globalBanner = ''; 
     let globalVenueImg = '';
+    let settingsLoaded = false; // 🚀 Bulletproof Flag
 
     // ==========================================
     // 🚀 TRANSLATOR (Short to Full Name)
@@ -58,13 +59,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 🌍 FETCH GLOBAL SETTINGS FIRST
+    // 🌍 FETCH GLOBAL SETTINGS FIRST (BULLETPROOF)
     // ==========================================
     onValue(ref(db, 'settings/payment'), (snap) => {
         if (snap.exists()) {
             const settings = snap.val();
             globalBanner = settings.globalBanner || '';
             globalVenueImg = settings.globalVenue || '';
+        }
+        settingsLoaded = true; // Signal that settings are fetched (even if empty)
+        
+        // If matches were already fetched, re-render them with new images
+        if (matchesData.length > 0) {
+            renderMatches(matchesData);
         }
     });
 
@@ -73,7 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     onValue(ref(db, 'matches'), (snapshot) => {  
 
-        matchList.innerHTML = '';  
         const data = snapshot.val();  
 
         if (!data) {  
@@ -98,7 +104,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         upcomingMatches.sort((a, b) => new Date(a.date) - new Date(b.date));
         matchesData = upcomingMatches;  
-        renderMatches(upcomingMatches);  
+
+        // 🚀 WAIT FOR SETTINGS BEFORE RENDERING
+        if (settingsLoaded) {
+            renderMatches(matchesData);  
+        }
     });
 
     if (sortFilter) {
@@ -151,9 +161,9 @@ document.addEventListener('DOMContentLoaded', () => {
             let teamA = teamsArray[0] ? getFullName(teamsArray[0]) : 'Team A';
             let teamB = teamsArray[1] ? getFullName(teamsArray[1]) : 'Team B';
 
-            // 🚀 GLOBAL IMAGE LOGIC: Agar match mein image nahi hai to Global wali use karo
-            const finalBanner = match.banner && match.banner.trim() !== "" ? match.banner : globalBanner;
-            const finalVenueImg = match.venue_img && match.venue_img.trim() !== "" ? match.venue_img : globalVenueImg;
+            // 🚀 GLOBAL IMAGE LOGIC (Bulletproof priority)
+            const finalBanner = (match.banner && match.banner.trim() !== "") ? match.banner : globalBanner;
+            const finalVenueImg = (match.venue_img && match.venue_img.trim() !== "") ? match.venue_img : globalVenueImg;
 
             const div = document.createElement('div');  
             div.className = 'timeline-row';  
