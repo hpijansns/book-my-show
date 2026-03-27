@@ -351,4 +351,3 @@ if (bookNowBtn) {
         openTnc();
     };
 }
-
