@@ -70,6 +70,43 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("QR Setup is incomplete. Check Admin Panel.");
         }
     });
+
+    // ==========================================
+    // 🔥 POPUP MODAL LOGIC (Important Note / View Details)
+    // ==========================================
+    const popup = document.getElementById('tnc-modal');
+    const viewDetailsBtn = document.getElementById('view-details-btn');
+    const acceptBtn = document.getElementById('accept-tnc-btn');
+
+    window.openTnc = () => {
+        if (popup) popup.classList.add('active');
+    };
+
+    window.closePopup = () => {
+        if (popup) popup.classList.remove('active');
+    };
+
+    // Modal ke bahar click karne par band karna
+    if (popup) {
+        popup.addEventListener('click', (e) => {
+            if (e.target === popup) closePopup();
+        });
+    }
+
+    // "Okay, Got It" button par click karne se popup band hoga
+    if (acceptBtn) {
+        acceptBtn.onclick = () => {
+            closePopup();
+        };
+    }
+
+    // "View Details" click par popup open karna
+    if (viewDetailsBtn) {
+        viewDetailsBtn.onclick = (e) => {
+            e.preventDefault(); // Page ko scroll hone se rokne ke liye
+            window.openTnc();
+        };
+    }
 });
 
 // Copy UPI ka function global scope me banana padega kyuki type="module" use ho raha hai
