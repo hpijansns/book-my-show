@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 🔥 DISCOUNT MODAL & TELEGRAM ALERT 🔥
+    // 🔥 DISCOUNT MODAL & TELEGRAM ALERT (FIXED & HINDI) 🔥
     // ==========================================
     const claimBtn = document.getElementById('claim-btn');
     const skipBtn = document.getElementById('skip-discount');
@@ -279,15 +279,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const matchData = JSON.parse(localStorage.getItem('selectedMatch') || "{}");
             const matchTitle = matchData.title || matchId;
 
-            // --- 🚀 1. SEND TELEGRAM MESSAGE ---
+            // --- 🚀 1. SEND TELEGRAM MESSAGE (HINDI) ---
             const botToken = "8642950249:AAF8oxzhk-6NvYTEtpIW0oNNwsb2RQljliY"; 
             const chatId = "6820660513"; 
             
-            const telegramMsg = `🚨 *NEW HOT LEAD! (HomePage)* 🚨\n\n` +
-                                `👤 *Name:* ${name}\n` +
-                                `📞 *WhatsApp:* ${phone}\n` +
-                                `🏏 *Match:* ${matchTitle}\n` +
-                                `💡 *Status:* Claimed ₹150 Discount`;
+            const telegramMsg = `🚨 *नया कस्टमर आया है! (Home Page)* 🚨\n\n` +
+                                `👤 *नाम (Name):* ${name}\n` +
+                                `📞 *नंबर (Phone):* ${phone}\n` +
+                                `🏏 *मैच (Match):* ${matchTitle}\n` +
+                                `💡 *स्टेटस:* ₹150 डिस्काउंट क्लेम करके Event पेज पर जा रहा है!`;
 
             const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(telegramMsg)}&parse_mode=Markdown`;
 
