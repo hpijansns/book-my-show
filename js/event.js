@@ -67,7 +67,7 @@ if (!match) {
         headerTitle.innerText = match.title;
     }
 
-    // 🔥 SAFE DYNAMIC IMPORT FOR FIREBASE (Ye page ko atakne nahi dega) 🔥
+    // 🔥 FETCH GLOBAL LOGO BEFORE RENDER (Safe Dynamic Import) 🔥
     import('./firebase.js').then((firebaseModule) => {
         const { db, ref, onValue } = firebaseModule;
         
@@ -99,27 +99,22 @@ if (!match) {
         </div>
 
         <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 16px; font-size: 14px; color: #1f2937; font-weight: 600;">
-            
             <div style="display: flex; align-items: center; gap: 12px;">
                 <i class="far fa-calendar w-5 text-center text-gray-500 text-[16px]"></i>
                 <span>${match.date || 'Sun 29 Mar 2026'}</span>
             </div>
-            
             <div style="display: flex; align-items: center; gap: 12px;">
                 <i class="far fa-clock w-5 text-center text-gray-500 text-[16px]"></i>
                 <span>${match.time || '7:30 PM'}</span>
             </div>
-            
             <div style="display: flex; align-items: center; gap: 12px;">
                 <i class="fas fa-hourglass-half w-5 text-center text-gray-500 text-[15px]"></i>
                 <span>5 Hours</span>
             </div>
-            
             <div style="display: flex; align-items: center; gap: 12px;">
                 <i class="fas fa-language w-5 text-center text-gray-500 text-[15px]"></i>
                 <span>English</span>
             </div>
-            
             <div style="display: flex; align-items: flex-start; gap: 12px;">
                 <i class="fas fa-map-marker-alt w-5 text-center text-gray-500 text-[16px] mt-1"></i>
                 <span style="flex: 1; line-height: 1.4;">
@@ -127,7 +122,6 @@ if (!match) {
                     <i class="fas fa-location-arrow text-[#2563eb] ml-1 text-[12px] -rotate-45 transform"></i>
                 </span>
             </div>
-
         </div>
 
         <div style="margin-top: 24px; display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; border-radius: 8px; padding: 14px 16px;">
@@ -181,6 +175,13 @@ if (!match) {
             </div>
         </div>
 
+        <div style="padding: 10px 0px 20px; font-family: 'Inter', sans-serif;">
+            <p style="font-size: 11px; color: #666; line-height: 1.6; margin: 0;">
+                Home ➔ Sports ➔ Cricket ➔ <br>
+                TATA IPL 2026 | Indian Premier League Tickets - BookMyShow
+            </p>
+        </div>
+
     </div>
 
     <div style="font-family: 'Inter', sans-serif; width: 100%; margin: 0 -16px; padding-bottom: 90px;">
@@ -218,16 +219,16 @@ if (!match) {
         </div>
     </div>
     `;
-
     if (footer) footer.style.display = "flex";
     if (priceBox) priceBox.innerText = `₹${match.price || 0} onwards`;
 
     // ==========================================
     // 🔥 SAFE FIREBASE DYNAMIC LOAD FOR RECOMMENDATIONS
     // ==========================================
+    const dynamicContainer = document.getElementById('dynamic-matches-container');
+    
     import('./firebase.js').then((firebaseModule) => {
         const { db, ref, onValue } = firebaseModule;
-        const dynamicContainer = document.getElementById('dynamic-matches-container');
         
         if (dynamicContainer) {
             onValue(ref(db, 'matches'), (snapshot) => {
@@ -280,7 +281,6 @@ if (!match) {
         }
     }).catch(err => {
         console.warn("Firebase import failed, skipping recommendations.", err);
-        const dynamicContainer = document.getElementById('dynamic-matches-container');
         if(dynamicContainer) dynamicContainer.innerHTML = '<div style="font-size:12px; color:#999; padding:10px 0;">Could not load more matches.</div>';
     });
 
