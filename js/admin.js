@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginError = document.getElementById('login-error');
     const loginBtn = document.getElementById('login-btn');
 
-    const ADMIN_ID = "7627055204";
+    const ADMIN_ID = "9680211974";
     const ADMIN_PASS = "Pooja2005";
 
     if (sessionStorage.getItem('adminLoggedIn') === 'true') {
