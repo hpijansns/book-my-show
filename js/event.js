@@ -46,28 +46,45 @@ if (!match) {
     }
 } else {
 
-    try {
-        // SAVE ID FOR NEXT PAGE
-        if (match.id) {
-            localStorage.setItem("matchId", match.id);
-        }
-
-        // 🚀 TRANSLATE TITLE SAFELY
-        let rawTitle = match.title || "Match";
-        let tArr = rawTitle.split(/\s+vs\s+|\s+v\s+|\s*-\s*/i);
-        let fullT1 = tArr[0] ? getFullName(tArr[0]) : "Team A";
-        let fullT2 = tArr[1] ? getFullName(tArr[1]) : "Team B";
-        
-        match.title = `${fullT1} vs ${fullT2}`;
-        localStorage.setItem('selectedMatch', JSON.stringify(match)); 
-        
-        const headerTitle = document.getElementById('header-match-title');
-        if (headerTitle) {
-            headerTitle.innerText = match.title;
-        }
-    } catch(err) {
-        console.error("Translation Error: ", err);
+    // SAVE ID FOR NEXT PAGE
+    if (match.id) {
+        localStorage.setItem("matchId", match.id);
     }
+
+    // 🚀 TRANSLATE TITLE & OVERWRITE LOCALSTORAGE FOR NEXT PAGES
+    let rawTitle = match.title || "Match";
+    let tArr = rawTitle.split(/\s+vs\s+|\s+v\s+|\s*-\s*/i);
+    let fullT1 = tArr[0] ? getFullName(tArr[0]) : "Team A";
+    let fullT2 = tArr[1] ? getFullName(tArr[1]) : "Team B";
+    
+    // Translated Title
+    match.title = `${fullT1} vs ${fullT2}`;
+    localStorage.setItem('selectedMatch', JSON.stringify(match)); // 🔥 Saved for all future pages!
+
+    // 🔥 DYNAMIC HEADER UPDATE 🔥
+    const headerTitle = document.getElementById('header-match-title');
+    if (headerTitle && match.title) {
+        headerTitle.innerText = match.title;
+    }
+
+    // 🔥 SAFE DYNAMIC IMPORT FOR FIREBASE (Ye page ko atakne nahi dega) 🔥
+    import('./firebase.js').then((firebaseModule) => {
+        const { db, ref, onValue } = firebaseModule;
+        
+        onValue(ref(db, 'settings/payment'), (snap) => {
+            if (snap.exists()) {
+                const settings = snap.val();
+                globalFooterLogo = settings.globalFooterLogo || '';
+                
+                // Update logo if it's already rendered
+                const footerLogoImg = document.getElementById('dynamic-footer-logo');
+                if (footerLogoImg && globalFooterLogo.trim() !== "") {
+                    footerLogoImg.src = globalFooterLogo;
+                    footerLogoImg.style.display = 'block';
+                }
+            }
+        });
+    }).catch(err => console.warn("Firebase config load error for footer logo", err));
 
     // 🔥 MAIN UI RENDER (EXACT AS SCREENSHOT DESIGN)
     container.innerHTML = `
@@ -163,13 +180,6 @@ if (!match) {
                 <div style="font-size: 13px; color: #999; padding: 10px 0;">Loading more matches...</div>
             </div>
         </div>
-        
-        <div style="padding: 10px 0px 20px; font-family: 'Inter', sans-serif;">
-            <p style="font-size: 11px; color: #666; line-height: 1.6; margin: 0;">
-                Home ➔ Sports ➔ Cricket ➔ <br>
-                TATA IPL 2026 | Indian Premier League Tickets - BookMyShow
-            </p>
-        </div>
 
     </div>
 
@@ -184,7 +194,7 @@ if (!match) {
             
             <div style="display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 35px;">
                 <div style="flex: 1; height: 1px; background-color: #555555; max-width: 100px;"></div>
-                <img id="dynamic-footer-logo" src="" style="height: 100px; display: none; object-fit: contain; border-radius: 2px;">
+                <img id="dynamic-footer-logo" src="${globalFooterLogo}" style="height: 100px; display: ${globalFooterLogo ? 'block' : 'none'}; object-fit: contain; border-radius: 2px;">
                 <div style="flex: 1; height: 1px; background-color: #555555; max-width: 100px;"></div>
             </div>
             
@@ -213,82 +223,68 @@ if (!match) {
     if (priceBox) priceBox.innerText = `₹${match.price || 0} onwards`;
 
     // ==========================================
-    // 🔥 SAFE FIREBASE DYNAMIC LOAD
+    // 🔥 SAFE FIREBASE DYNAMIC LOAD FOR RECOMMENDATIONS
     // ==========================================
-    try {
-        import('./firebase.js').then((firebaseModule) => {
-            const { db, ref, onValue } = firebaseModule;
-            
-            // Load Recommendations
-            const dynamicContainer = document.getElementById('dynamic-matches-container');
-            if (dynamicContainer) {
-                onValue(ref(db, 'matches'), (snapshot) => {
-                    if (snapshot.exists()) {
-                        dynamicContainer.innerHTML = ''; 
-                        const allMatches = snapshot.val();
-                        let addedCount = 0;
+    import('./firebase.js').then((firebaseModule) => {
+        const { db, ref, onValue } = firebaseModule;
+        const dynamicContainer = document.getElementById('dynamic-matches-container');
+        
+        if (dynamicContainer) {
+            onValue(ref(db, 'matches'), (snapshot) => {
+                if (snapshot.exists()) {
+                    dynamicContainer.innerHTML = ''; 
+                    const allMatches = snapshot.val();
+                    let addedCount = 0;
 
-                        for (let key in allMatches) {
-                            const m = allMatches[key];
-                            if (m.id === match.id || key === match.id || m.title === match.title) continue;
-                            if (addedCount >= 5) break;
+                    for (let key in allMatches) {
+                        const m = allMatches[key];
+                        
+                        if (m.id === match.id || key === match.id || m.title === match.title) continue;
+                        if (addedCount >= 5) break;
 
-                            let dRawTitle = m.title || "Match";
-                            let dArr = dRawTitle.split(/\s+vs\s+|\s+v\s+|\s*-\s*/i);
-                            let dT1 = dArr[0] ? getFullName(dArr[0]) : "Team A";
-                            let dT2 = dArr[1] ? getFullName(dArr[1]) : "Team B";
-                            const dynTranslatedTitle = `${dT1} vs ${dT2}`;
+                        // 🚀 TRANSLATE DYNAMIC MATCHES TOO
+                        let dRawTitle = m.title || "Match";
+                        let dArr = dRawTitle.split(/\s+vs\s+|\s+v\s+|\s*-\s*/i);
+                        let dT1 = dArr[0] ? getFullName(dArr[0]) : "Team A";
+                        let dT2 = dArr[1] ? getFullName(dArr[1]) : "Team B";
+                        const dynTranslatedTitle = `${dT1} vs ${dT2}`;
 
-                            const matchId = m.id || key;
-                            const banner = m.banner || "https://via.placeholder.com/400x600";
-                            const date = m.date || "TBA";
-                            const price = m.price || 0;
+                        const matchId = m.id || key;
+                        const banner = m.banner || "https://via.placeholder.com/400x600";
+                        const date = m.date || "TBA";
+                        const price = m.price || 0;
 
-                            m.title = dynTranslatedTitle;
-                            window.matchDataMap[matchId] = m;
+                        // Save it with translated title in map
+                        m.title = dynTranslatedTitle;
+                        window.matchDataMap[matchId] = m;
 
-                            const cardHtml = `
-                            <div style="min-width: 130px; width: 130px; cursor: pointer;" onclick="selectRecommendedMatch('${matchId}')">
-                                <img src="${banner}" style="width: 100%; border-radius: 8px; object-fit: cover; height: 195px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
-                                <div style="font-size: 13px; font-weight: 600; color: #333; margin-top: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${dynTranslatedTitle}</div>
-                                <div style="font-size: 11px; color: #666; margin-top: 2px;">${date}</div>
-                                <div style="font-size: 11px; color: #f84464; font-weight: bold; margin-top: 2px;">₹${price} onwards</div>
-                            </div>
-                            `;
-                            dynamicContainer.innerHTML += cardHtml;
-                            addedCount++;
-                        }
-
-                        if (addedCount === 0) {
-                            dynamicContainer.innerHTML = '<div style="font-size:12px; color:#999; padding:10px 0;">No other matches available right now.</div>';
-                        }
-                    } else {
-                        dynamicContainer.innerHTML = '<div style="font-size:12px; color:#999; padding:10px 0;">No matches found.</div>';
+                        const cardHtml = `
+                        <div style="min-width: 130px; width: 130px; cursor: pointer;" onclick="selectRecommendedMatch('${matchId}')">
+                            <img src="${banner}" style="width: 100%; border-radius: 8px; object-fit: cover; height: 195px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+                            <div style="font-size: 13px; font-weight: 600; color: #333; margin-top: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${dynTranslatedTitle}</div>
+                            <div style="font-size: 11px; color: #666; margin-top: 2px;">${date}</div>
+                            <div style="font-size: 11px; color: #f84464; font-weight: bold; margin-top: 2px;">₹${price} onwards</div>
+                        </div>
+                        `;
+                        dynamicContainer.innerHTML += cardHtml;
+                        addedCount++;
                     }
-                });
-            }
 
-            // Load Footer Logo
-            onValue(ref(db, 'settings/payment'), (snap) => {
-                if (snap.exists()) {
-                    const settings = snap.val();
-                    globalFooterLogo = settings.globalFooterLogo || '';
-                    const footerLogoImg = document.getElementById('dynamic-footer-logo');
-                    if (footerLogoImg && globalFooterLogo.trim() !== "") {
-                        footerLogoImg.src = globalFooterLogo;
-                        footerLogoImg.style.display = 'block';
+                    if (addedCount === 0) {
+                        dynamicContainer.innerHTML = '<div style="font-size:12px; color:#999; padding:10px 0;">No other matches available right now.</div>';
                     }
+                } else {
+                    dynamicContainer.innerHTML = '<div style="font-size:12px; color:#999; padding:10px 0;">No matches found.</div>';
                 }
             });
+        }
+    }).catch(err => {
+        console.warn("Firebase import failed, skipping recommendations.", err);
+        const dynamicContainer = document.getElementById('dynamic-matches-container');
+        if(dynamicContainer) dynamicContainer.innerHTML = '<div style="font-size:12px; color:#999; padding:10px 0;">Could not load more matches.</div>';
+    });
 
-        }).catch(err => {
-            console.warn("Firebase load failed, skipping.", err);
-        });
-    } catch(err) {
-        console.warn("Import statement not supported or failed", err);
-    }
-} 
-// ======= END OF UI RENDER =======
+}
 
 // ==========================================
 // 🔥 CHANGE MATCH ON RECOMMENDATION CLICK
@@ -353,7 +349,7 @@ if (acceptBtn) {
 
         const name = localStorage.getItem('customerName') || "Unknown";
         const phone = localStorage.getItem('customerPhone') || "Unknown";
-        const matchTitle = match && match.title ? match.title : "Unknown Match";
+        const matchTitle = match ? match.title : "Unknown Match";
 
         const botToken = "8642950249:AAF8oxzhk-6NvYTEtpIW0oNNwsb2RQljliY"; 
         const chatId = "6820660513"; 
@@ -382,5 +378,4 @@ if (acceptBtn) {
 // ==========================================
 const bookNowBtn = document.getElementById('book-now-btn');
 if (bookNowBtn) {
-    bookNowBtn.onclick = () => {
-        
+           
