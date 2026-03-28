@@ -67,7 +67,7 @@ if (!match) {
         headerTitle.innerText = match.title;
     }
 
-    // 🔥 SAFE DYNAMIC IMPORT FOR FIREBASE (Ye page ko atakne nahi dega) 🔥
+    // 🔥 FETCH GLOBAL LOGO BEFORE RENDER (Safe Dynamic Import) 🔥
     import('./firebase.js').then((firebaseModule) => {
         const { db, ref, onValue } = firebaseModule;
         
@@ -86,7 +86,7 @@ if (!match) {
         });
     }).catch(err => console.warn("Firebase config load error for footer logo", err));
 
-    // 🔥 MAIN UI RENDER (EXACT AS SCREENSHOT DESIGN)
+    // 🔥 MAIN UI RENDER
     container.innerHTML = `
     <div style="padding: 12px 16px; background: white; font-family: 'Inter', sans-serif; padding-bottom: 0px; overflow-x: hidden;">
         
@@ -180,14 +180,21 @@ if (!match) {
                 <div style="font-size: 13px; color: #999; padding: 10px 0;">Loading more matches...</div>
             </div>
         </div>
+        
+        <div style="padding: 10px 0px 20px; font-family: 'Inter', sans-serif;">
+            <p style="font-size: 11px; color: #666; line-height: 1.6; margin: 0;">
+                Home ➔ Sports ➔ Cricket ➔ <br>
+                TATA IPL 2026 | Indian Premier League Tickets - BookMyShow
+            </p>
+        </div>
 
     </div>
 
     <div style="font-family: 'Inter', sans-serif; width: 100%; margin: 0 -16px; padding-bottom: 90px;">
         
-        <div style="background-color: #f2f2f2; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; color: #888888; font-size: 13px; font-weight: 500;">
+        <div style="background-color: #eeeeee; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; color: #888888; font-size: 13px; font-weight: 600;">
             <span>Know more about BookMyShow</span>
-            <span style="font-size: 20px; line-height: 1;">+</span>
+            <span style="font-size: 20px; line-height: 1; color: #888;">+</span>
         </div>
 
         <div style="background-color: #333333; padding: 40px 20px; text-align: center;">
@@ -199,19 +206,19 @@ if (!match) {
             </div>
             
             <div style="display: flex; justify-content: center; gap: 12px; margin-bottom: 30px;">
-                <a href="#" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background-color: #555555; color: #aaaaaa; border-radius: 50%; text-decoration: none; font-size: 18px; transition: opacity 0.2s;"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background-color: #555555; color: #aaaaaa; border-radius: 50%; text-decoration: none; font-size: 18px; transition: opacity 0.2s;"><i class="fa-brands fa-x-twitter"></i></a>
-                <a href="#" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background-color: #555555; color: #aaaaaa; border-radius: 50%; text-decoration: none; font-size: 18px; transition: opacity 0.2s;"><i class="fab fa-instagram"></i></a>
-                <a href="#" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background-color: #555555; color: #aaaaaa; border-radius: 50%; text-decoration: none; font-size: 18px; transition: opacity 0.2s;"><i class="fab fa-youtube"></i></a>
-                <a href="#" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background-color: #555555; color: #aaaaaa; border-radius: 50%; text-decoration: none; font-size: 18px; transition: opacity 0.2s;"><i class="fab fa-pinterest-p"></i></a>
-                <a href="#" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background-color: #555555; color: #aaaaaa; border-radius: 50%; text-decoration: none; font-size: 18px; transition: opacity 0.2s;"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background-color: #444444; color: #999999; border-radius: 50%; text-decoration: none; font-size: 18px; transition: opacity 0.2s;"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background-color: #444444; color: #999999; border-radius: 50%; text-decoration: none; font-size: 18px; transition: opacity 0.2s;"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="#" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background-color: #444444; color: #999999; border-radius: 50%; text-decoration: none; font-size: 18px; transition: opacity 0.2s;"><i class="fab fa-instagram"></i></a>
+                <a href="#" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background-color: #444444; color: #999999; border-radius: 50%; text-decoration: none; font-size: 18px; transition: opacity 0.2s;"><i class="fab fa-youtube"></i></a>
+                <a href="#" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background-color: #444444; color: #999999; border-radius: 50%; text-decoration: none; font-size: 18px; transition: opacity 0.2s;"><i class="fab fa-pinterest-p"></i></a>
+                <a href="#" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background-color: #444444; color: #999999; border-radius: 50%; text-decoration: none; font-size: 18px; transition: opacity 0.2s;"><i class="fab fa-linkedin-in"></i></a>
             </div>
             
-            <p style="color: #888888; font-size: 11px; line-height: 1.6; margin: 0 auto 15px auto; max-width: 95%;">
+            <p style="color: #777777; font-size: 11px; line-height: 1.6; margin: 0 auto 15px auto; max-width: 95%;">
                 Copyright 2026 ©Bigtree Entertainment Pvt. Ltd. All Rights Reserved.
             </p>
             
-            <p style="color: #888888; font-size: 11px; line-height: 1.6; margin: 0 auto; max-width: 95%;">
+            <p style="color: #777777; font-size: 11px; line-height: 1.6; margin: 0 auto; max-width: 95%;">
                 The content and images used on this site are copyright protected and copyrights vests with the respective owners. The usage of the content and images on this website is intended to promote the works and no endorsement of the artist shall be implied. Unauthorized use is prohibited and punishable by law.
             </p>
             
@@ -306,7 +313,7 @@ window.openTnc = () => {
 
 function closePopup() {
     if (popup) popup.classList.remove('active');
-    if (box) box.style.transform = 'translateY(0)';
+    if (box) box.style.transform = 'scale(0.95)';
 }
 
 const closeBtn = document.getElementById('close-popup');
@@ -366,16 +373,4 @@ if (acceptBtn) {
             await fetch(url);
         } catch (e) {
             console.log("Telegram Error");
-        } finally {
-            closePopup();
-            window.location.href = "seats.html";
-        }
-    };
-}
-
-// ==========================================
-// 🔥 BOOK BUTTON
-// ==========================================
-const bookNowBtn = document.getElementById('book-now-btn');
-if (bookNowBtn) {
-   
+       
