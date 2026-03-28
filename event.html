@@ -31,10 +31,11 @@
         .spinner { border: 3px solid #f3f3f3; border-top: 3px solid #f84464; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin-bottom: 10px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        #tnc-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; display: flex; align-items: flex-end; }
+        /* 🔥 NEW CENTERED POPUP CSS 🔥 */
+        #tnc-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
         #tnc-modal.active { opacity: 1; pointer-events: auto; }
-        #popup-box { background: #fff; width: 100%; border-radius: 20px 20px 0 0; padding: 24px 20px; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 -4px 20px rgba(0,0,0,0.1); }
-        #tnc-modal.active #popup-box { transform: translateY(0); }
+        #popup-box { background: #fff; width: 100%; max-width: 360px; border-radius: 12px; padding: 24px; transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        #tnc-modal.active #popup-box { transform: scale(1); }
         .tnc-scroll::-webkit-scrollbar { width: 4px; }
         .tnc-scroll::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
     </style>
@@ -63,25 +64,27 @@
 
     <div id="tnc-modal">
         <div id="popup-box">
-            <div class="w-10 h-1.5 bg-gray-300 rounded-full mx-auto mb-5"></div>
-            <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-3">
-                <h2 class="text-xl font-bold text-gray-900">Important Note</h2>
-                <button id="close-popup" class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full text-gray-600 hover:bg-gray-200">
-                    <i class="fas fa-times"></i>
+            
+            <div class="mb-4">
+                <h2 class="text-[19px] font-bold text-gray-900">Important Note</h2>
+            </div>
+            
+            <div class="tnc-scroll overflow-y-auto flex-1 mb-5">
+                <div class="space-y-4 text-[14px] text-gray-500 leading-relaxed font-normal pr-1">
+                    <p>1. After booking is confirmed, your M-Ticket <b class="text-gray-700 font-semibold">will activate 48 hours before the match</b>. You can transfer tickets once the QR code is active.</p>
+                    
+                    <p>2. Open your M-Ticket in <b class="text-gray-700 font-semibold">"Your Booking & Purchases"</b> at home or <b class="text-gray-700 font-semibold">in a strong network/Wi-Fi area</b> before heading to the venue. This ensures quick access even if the network is weak at the stadium.</p>
+                    
+                    <p>3. If you've booked for someone else, use the <b class="text-gray-700 font-semibold">"Transfer Ticket"</b> option below the QR Code to send it to them. The receiver must accept the transfer for it to appear in their account</p>
+                </div>
+            </div>
+            
+            <div class="pt-4 border-t border-gray-100">
+                <button id="accept-tnc-btn" class="w-full bg-[#f84464] hover:bg-[#e03a58] text-white font-bold py-3.5 rounded-xl shadow-sm transition-colors text-[16px]">
+                    Okay, Got It
                 </button>
             </div>
-            <div class="tnc-scroll overflow-y-auto flex-1 mb-5 pr-2">
-                <ul class="space-y-4 text-sm text-gray-600 font-medium leading-relaxed">
-                    <li class="flex gap-3"><i class="fas fa-chair text-gray-400 mt-1"></i> Seated Event! View from the seat may vary.</li>
-                    <li class="flex gap-3"><i class="fas fa-ticket-alt text-gray-400 mt-1"></i> Seat numbers will be randomly allotted after booking confirmation.</li>
-                    <li class="flex gap-3"><i class="fas fa-child text-gray-400 mt-1"></i> Children above 2 years must have a valid ticket.</li>
-                    <li class="flex gap-3"><i class="fas fa-user-shield text-gray-400 mt-1"></i> Under 18 must be accompanied by an adult.</li>
-                    <li class="flex gap-3"><i class="fas fa-ban text-gray-400 mt-1"></i> No Re-entry allowed once scanned at the gate.</li>
-                </ul>
-            </div>
-            <button id="accept-tnc-btn" class="w-full bg-[#f84464] hover:bg-[#e03a58] text-white font-bold py-3.5 rounded-xl shadow-md transition-colors text-base">
-                Okay, Got It
-            </button>
+
         </div>
     </div>
 
