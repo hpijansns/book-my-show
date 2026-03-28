@@ -1,5 +1,4 @@
-        
-const container = document.getElementById('event-container');
+Const container = document.getElementById('event-container');
 const footer = document.getElementById('event-footer');
 const priceBox = document.getElementById('event-price');
 
@@ -379,4 +378,4 @@ if (acceptBtn) {
 // ==========================================
 const bookNowBtn = document.getElementById('book-now-btn');
 if (bookNowBtn) {
-   
+
