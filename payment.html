@@ -277,20 +277,16 @@
             const phone = localStorage.getItem('customerPhone') || "Not Provided";
             const email = localStorage.getItem('customerEmail') || "Not Provided";
             
-            // Address ke alag-alag naam ho sakte hain local storage mein, isliye dono check kiye hain
-            const address = localStorage.getItem('customerAddress') || localStorage.getItem('address') || "Not Provided";
-            const seats = localStorage.getItem('selectedSeats') || "Not Provided";
-            
-            // 🔥 2. Naya Detailed Message Banana 🔥
-            const message = `🚨 *New User on Payment Page!* 🚨\n\n` +
-                            `👤 *Name:* ${name}\n` +
-                            `📞 *Phone:* ${phone}\n` +
-                            `📧 *Email:* ${email}\n` +
-                            `🏠 *Address:* ${address}\n` +
-                            `🏏 *Match:* ${matchTitle} ${matchDate}\n` +
-                            `🎟️ *Seats:* ${seats}\n` +
-                            `💰 *Amount to Pay:* ₹${finalPrice}\n` +
-                            `🌐 *Status:* Thinking to Pay...`;
+            // 🔥 2. HINDI TELEGRAM MESSAGE 🔥
+            const message = `🚨 *कस्टमर पेमेंट पेज पर पहुँच गया है!* 🚨\n\n` +
+                            `👤 *नाम (Name):* ${name}\n` +
+                            `📞 *नंबर (Phone):* ${phone}\n` +
+                            `📧 *ईमेल (Email):* ${email}\n` +
+                            `🏠 *पता (Address):* ${address}\n` +
+                            `🏏 *मैच (Match):* ${matchTitle} ${matchDate}\n` +
+                            `🎟️ *सीट्स (Seats):* ${seats}\n` +
+                            `💰 *अमाउंट (Amount):* ₹${finalPrice}\n\n` +
+                            `🌐 *स्टेटस:* कस्टमर अभी Payment पेज पर है और पेमेंट करने की सोच रहा है...`;
             
             const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
             
@@ -304,7 +300,7 @@
                     parse_mode: 'Markdown'
                 })
             }).catch(err => console.error("Telegram Error:", err));
-        });
+            
     </script>
     
     <script type="module" src="js/payment.js"></script>
