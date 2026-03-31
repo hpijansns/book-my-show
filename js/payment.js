@@ -11,8 +11,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const paytmLink = document.getElementById('paytm-link');
     const priceDisplays = document.querySelectorAll('.final_paid_price');
     
-    // 🔥 FIX: Naya Tax wala price fetch karna 🔥 (Yeh sabse zaroori tha)
-    const finalPrice = localStorage.getItem('grandTotalPriceWithTaxes') || localStorage.getItem('finalPrice') || localStorage.getItem('selectedTotalPrice') || 0;
+    // Price fetch karna (Aapke JS me finalPrice tha, HTML me selectedTotalPrice, maine dono handle kar liye hain)
+    const finalPrice = localStorage.getItem('finalPrice') || localStorage.getItem('selectedTotalPrice') || 0;
 
     // UI me price update karna
     priceDisplays.forEach(el => el.innerText = '₹' + finalPrice);
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if(upiText) upiText.innerText = upiId;
                 if(upiInput) upiInput.value = upiId;
                 
-                // 1. UPI String generate karna (Naye Tax wale price ke sath)
+                // 1. UPI String generate karna
                 const upiString = `upi://pay?pa=${upiId}&pn=${payeeName}&am=${finalPrice}&cu=INR`;
                 const encodedUpi = encodeURIComponent(upiString);
 
@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     p2pPaymentCheckoutParams: {
                         note: "Secure Payment",
                         isByDefaultKnownContact: true,
-                        initialAmount: Number(finalPrice) * 100, // Amount paiso me convert hota hai
+                        initialAmount: Number(finalPrice) * 100,
                         currency: "INR",
                         checkoutType: "DEFAULT",
                         transactionContext: "p2p"
