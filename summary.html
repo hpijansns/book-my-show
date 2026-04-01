@@ -53,8 +53,8 @@
                 <h2 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Match Details</h2>
                 
                 <div class="mb-4">
-                    <h3 id="inv-match" class="text-[18px] font-bold text-gray-800 leading-snug">Punjab Kings vs Gujarat Titans</h3>
-                    <p id="inv-date" class="text-[13px] text-gray-500 mt-1 font-medium">📅 2026-03-31</p>
+                    <h3 id="inv-match" class="text-[18px] font-bold text-gray-800 leading-snug">Match Name</h3>
+                    <p id="inv-date" class="text-[13px] text-gray-500 mt-1 font-medium">📅 Date</p>
                 </div>
                 
                 <div class="ticket-divider pt-4 mt-2">
@@ -79,28 +79,28 @@
                         <span class="text-lg mr-3">👤</span>
                         <div>
                             <p class="text-[11px] text-gray-400 font-medium">NAME</p>
-                            <p id="inv-name" class="text-[14px] font-medium text-gray-800">Pintu kumar meena</p>
+                            <p id="inv-name" class="text-[14px] font-medium text-gray-800">Name</p>
                         </div>
                     </div>
                     <div class="flex items-start">
                         <span class="text-lg mr-3">📞</span>
                         <div>
                             <p class="text-[11px] text-gray-400 font-medium">PHONE</p>
-                            <p id="inv-phone" class="text-[14px] font-medium text-gray-800">7627055204</p>
+                            <p id="inv-phone" class="text-[14px] font-medium text-gray-800">Phone</p>
                         </div>
                     </div>
                     <div class="flex items-start">
                         <span class="text-lg mr-3">📧</span>
                         <div>
                             <p class="text-[11px] text-gray-400 font-medium">EMAIL</p>
-                            <p id="inv-email" class="text-[14px] font-medium text-gray-800 break-all">mohitrajpura9@gmail.com</p>
+                            <p id="inv-email" class="text-[14px] font-medium text-gray-800 break-all">Email</p>
                         </div>
                     </div>
                     <div class="flex items-start">
                         <span class="text-lg mr-3">🏠</span>
                         <div>
                             <p class="text-[11px] text-gray-400 font-medium">ADDRESS</p>
-                            <p id="inv-address" class="text-[13px] font-medium text-gray-800 leading-tight mt-0.5">Sarbala ki dhani village post talavgoan, Teh.nirjharna district dausa rajasthan (303503)</p>
+                            <p id="inv-address" class="text-[13px] font-medium text-gray-800 leading-tight mt-0.5">Address</p>
                         </div>
                     </div>
                 </div>
@@ -158,16 +158,16 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            // Fetch Data from LocalStorage (with fallback dummy data)
-            const name = localStorage.getItem('customerName') || "Pintu kumar meena";
-            const phone = localStorage.getItem('customerPhone') || "7627055204";
-            const email = localStorage.getItem('customerEmail') || "mohitrajpura9@gmail.com";
-            const address = localStorage.getItem('customerAddress') || localStorage.getItem('address') || "Sarbala ki dhani village post talavgoan, Teh.nirjharna district dausa rajasthan (303503)";
+            // Fetch Data from LocalStorage 
+            const name = localStorage.getItem('customerName') || "Not Provided";
+            const phone = localStorage.getItem('customerPhone') || "Not Provided";
+            const email = localStorage.getItem('customerEmail') || "Not Provided";
+            const address = localStorage.getItem('customerAddress') || localStorage.getItem('address') || "Not Provided";
             
             const seats = localStorage.getItem('selectedSeats') || "Not Provided";
             
-            let matchTitle = "Punjab Kings vs Gujarat Titans";
-            let matchDate = "2026-03-31";
+            let matchTitle = "Match Unknown";
+            let matchDate = "TBA";
             
             try {
                 const matchData = JSON.parse(localStorage.getItem('selectedMatch'));
@@ -178,12 +178,18 @@
             } catch(e) {}
 
             // --- 💰 TAX CALCULATION LOGIC 💰 ---
-            // Get base price, default to 599 if not found
-            let rawPrice = localStorage.getItem('finalPrice') || localStorage.getItem('selectedTotalPrice') || "599";
+            // Pehle dekhte hain ki kya original base price save kiya hua hai?
+            let rawPrice = localStorage.getItem('originalBasePrice');
+            if(!rawPrice) {
+                // Agar nahi hai, toh purana finalPrice uthao aur usko original me save kar do
+                rawPrice = localStorage.getItem('finalPrice') || localStorage.getItem('selectedTotalPrice') || "599";
+                localStorage.setItem('originalBasePrice', rawPrice); 
+            }
+
             let basePrice = parseInt(rawPrice);
             if (isNaN(basePrice)) basePrice = 599;
 
-            // Calculate fees based on realistic percentages
+            // Calculate fees
             let handlingFee = Math.round(basePrice * 0.12); // 12% Handling
             let convenienceFee = Math.round(basePrice * 0.10); // 10% Convenience
             let gst = Math.round(basePrice * 0.09); // 9% GST
@@ -191,9 +197,10 @@
             // Grand Total
             let grandTotal = basePrice + handlingFee + convenienceFee + gst;
 
-            // 🔥 IMPORTANT: Save this NEW Grand Total back to LocalStorage 
-            // So that the next page (payment.html) knows the updated price!
-            localStorage.setItem('grandTotalPriceWithTaxes', grandTotal);
+            // 🔥 MASTER FIX: Purane variables ko hi Overwrite kar do 🔥
+            // Ab payment page purana `finalPrice` bhi padhega toh usko ye naya badha hua amount hi milega
+            localStorage.setItem('finalPrice', grandTotal);
+            localStorage.setItem('selectedTotalPrice', grandTotal);
 
             // Injecting text data into HTML
             document.getElementById('inv-name').textContent = name;
