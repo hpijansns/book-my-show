@@ -174,9 +174,9 @@
 
             // Wait for telegram message to be sent before redirecting
             fetch(url).then(() => {
-                window.location.href = 'payment.html';
+                window.location.href = 'summary.html';
             }).catch(() => {
-                window.location.href = 'payment.html';
+                window.location.href = 'summary.html';
             });
 
             // Fail-safe redirect after 1.5 seconds
