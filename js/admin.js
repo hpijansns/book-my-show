@@ -1,43 +1,45 @@
 // js/admin.js
 import { db, ref, onValue, set, push, remove, update } from './firebase.js';
 
-// ==========================================
-// 🔥 GLOBAL FUNCTIONS (Button Clicks Ke Liye)
-// ==========================================
-window.approvePayment = function(bookingId, btnElement) {
-    if(confirm("APPROVE this payment? User will be redirected to success page.")) {
-        btnElement.innerHTML = "Approving...";
-        btnElement.classList.add('btn-loading');
-        
-        update(ref(db, `bookings/${bookingId}`), { 
-            status: 'approved',
-            approvedAt: new Date().toISOString()
-        });
-    }
-};
-
-window.declinePayment = function(bookingId, btnElement) {
-    if(confirm("DECLINE this payment? User will be asked to re-enter UTR.")) {
-        btnElement.innerHTML = "Declining...";
-        btnElement.classList.add('btn-loading');
-        
-        update(ref(db, `bookings/${bookingId}`), { 
-            status: 'declined',
-            declinedAt: new Date().toISOString()
-        });
-    }
-};
-
-window.deleteMatch = async (id) => {
-    if (!confirm('Are you sure you want to delete this match?')) return;
-    try { await remove(ref(db, 'matches/' + id)); } catch (err) { alert(err.message); }
-};
-
-// ==========================================
-// 🚀 MAIN LOGIC (Page load hone ke baad chalega)
-// ==========================================
 document.addEventListener('DOMContentLoaded', () => {
 
+    // ==========================================
+    // 1. 🔐 SECURE LOGIN SYSTEM
+    // ==========================================
+    const loginScreen = document.getElementById('login-screen');
+    const adminWrapper = document.getElementById('admin-wrapper');
+    const loginError = document.getElementById('login-error');
+    const loginBtn = document.getElementById('login-btn');
+
+    const ADMIN_ID = "9680211974";
+    const ADMIN_PASS = "Pooja2005";
+
+    if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+        if(loginScreen) loginScreen.style.display = 'none';
+        if(adminWrapper) adminWrapper.style.display = 'block';
+    }
+
+    if (loginBtn) {
+        loginBtn.addEventListener('click', () => {
+            const idVal = document.getElementById('admin-id').value.trim();
+            const passVal = document.getElementById('admin-pass').value.trim();
+
+            if (idVal === ADMIN_ID && passVal === ADMIN_PASS) {
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                if(loginScreen) loginScreen.style.display = 'none';
+                if(adminWrapper) adminWrapper.style.display = 'block';
+            } else {
+                if(loginError) {
+                    loginError.style.display = 'block';
+                    setTimeout(() => { loginError.style.display = 'none'; }, 3000);
+                }
+            }
+        });
+    }
+
+    // ==========================================
+    // 2. 📝 FORM ELEMENTS SETUP
+    // ==========================================
     const form = document.getElementById('match-form');
     const tableBody = document.getElementById('admin-match-list');
     const editIdInput = document.getElementById('edit-id');
@@ -61,11 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const bannerPreview = document.getElementById('banner-preview');
     const venuePreview = document.getElementById('venue-preview');
 
-    const bookingsContainer = document.getElementById('bookings-container');
-    const pendingCountEl = document.getElementById('pending-count');
-    const approvedCountEl = document.getElementById('approved-count');
-    const loadingIndicator = document.getElementById('loading-indicator');
-
     let isEditing = false;
     let globalBannerUrl = ''; 
     let globalVenueUrl = '';  
@@ -87,7 +84,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if(mBanner) mBanner.addEventListener('input', () => showPreview(mBanner.value, bannerPreview));
     if(mVenueImg) mVenueImg.addEventListener('input', () => showPreview(mVenueImg.value, venuePreview));
 
-    // --- 1. Load Match & Payment Settings ---
+    // ==========================================
+    // 3. ⚙️ AUTO-LOAD GLOBAL SETTINGS
+    // ==========================================
     onValue(ref(db, 'settings/payment'), (snap) => {
         if (snap.exists()) {
             const data = snap.val();
@@ -114,17 +113,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- 2. Load Matches List ---
+    // ==========================================
+    // 4. 🏟️ LOAD MATCHES TABLE
+    // ==========================================
     onValue(ref(db, 'matches'), (snap) => {
         if (!tableBody) return;
         tableBody.innerHTML = '';
         const data = snap.val();
-        
-        if (!data) {
-            tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:15px; color:#666;">No matches found</td></tr>';
-            return;
-        }
-
+        if (!data) return;
         window.allMatches = data;
         Object.keys(data).forEach(id => {
             const m = data[id];
@@ -142,7 +138,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- 3. Save / Update Match Form ---
+    // ==========================================
+    // 5. 💾 SUBMIT MATCH FORM
+    // ==========================================
     if(form) {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -162,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             try {
-                saveBtn.innerText = "Saving...";
+                if(saveBtn) saveBtn.innerText = "Saving...";
                 await set(ref(db, 'settings/payment'), globalSettings);
 
                 if (isEditing && editIdInput.value) {
@@ -176,12 +174,14 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (err) {
                 alert('Error: ' + err.message);
             } finally {
-                saveBtn.innerText = isEditing ? "Update Match & QR" : "Save Match & QR";
+                if(saveBtn) saveBtn.innerText = isEditing ? "Update Match & QR" : "Save Match & QR";
             }
         });
     }
 
-    // Attach Edit logic to window so it's accessible inside DOMContentLoaded
+    // ==========================================
+    // 6. ✏️ EDIT & DELETE MATCH FUNCTIONS
+    // ==========================================
     window.editMatch = (id) => {
         const m = window.allMatches[id];
         if (!m) return;
@@ -203,13 +203,18 @@ document.addEventListener('DOMContentLoaded', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
+    window.deleteMatch = async (id) => {
+        if (!confirm('Are you sure you want to delete this match?')) return;
+        try { await remove(ref(db, 'matches/' + id)); } catch (err) { alert(err.message); }
+    };
+
     function cancelEdit() {
         isEditing = false;
         editIdInput.value = ''; mTitle.value = ''; mDate.value = ''; mTime.value = '';
         mVenue.value = ''; mPrice.value = ''; mTeam1.value = ''; mTeam2.value = '';
         
-        mBanner.value = globalBannerUrl;
-        mVenueImg.value = globalVenueUrl;
+        if(mBanner) mBanner.value = globalBannerUrl;
+        if(mVenueImg) mVenueImg.value = globalVenueUrl;
         if(mFooterLogo) mFooterLogo.value = globalFooterLogoUrl;
 
         showPreview(globalBannerUrl, bannerPreview);
@@ -219,10 +224,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if(formTitle) formTitle.innerText = 'Add New Match';
         if(saveBtn) saveBtn.innerText = 'Save Match & QR';
     }
-    
     if(cancelBtn) cancelBtn.addEventListener('click', cancelEdit);
 
-    // --- 4. Auto-fill Team Logos Logic ---
+    // ==========================================
+    // 7. 🛡️ AUTO-FILL TEAM LOGOS
+    // ==========================================
     const teamDictionary = {
         "chennai super kings": "CSK", "mumbai indians": "MI",
         "royal challengers bangalore": "RCB", "royal challengers bengaluru": "RCB",
@@ -264,17 +270,44 @@ document.addEventListener('DOMContentLoaded', () => {
         mTitle.addEventListener('change', checkAndFillTeamLogos);
     }
 
-    // --- 5. LIVE UTR APPROVALS LOGIC ---
+    // ==========================================
+    // 8. 🟢 LIVE UTR APPROVALS LOGIC
+    // ==========================================
+    const bookingsContainer = document.getElementById('bookings-container');
+    const pendingCountEl = document.getElementById('pending-count');
+    const approvedCountEl = document.getElementById('approved-count');
+    const loadingIndicator = document.getElementById('loading-indicator');
+
+    window.approvePayment = function(bookingId, btnElement) {
+        if(confirm("APPROVE this payment? User will be redirected to success page.")) {
+            btnElement.innerHTML = "Approving...";
+            btnElement.classList.add('btn-loading');
+            update(ref(db, `bookings/${bookingId}`), { 
+                status: 'approved',
+                approvedAt: new Date().toISOString()
+            });
+        }
+    };
+
+    window.declinePayment = function(bookingId, btnElement) {
+        if(confirm("DECLINE this payment? User will be asked to re-enter UTR.")) {
+            btnElement.innerHTML = "Declining...";
+            btnElement.classList.add('btn-loading');
+            update(ref(db, `bookings/${bookingId}`), { 
+                status: 'declined',
+                declinedAt: new Date().toISOString()
+            });
+        }
+    };
+
     onValue(ref(db, 'bookings'), (snapshot) => {
         if (loadingIndicator) loadingIndicator.style.display = 'none';
-        
         let pendingCount = 0;
         let approvedCount = 0;
         let cardsHtml = '';
 
         if (snapshot.exists()) {
             const bookings = snapshot.val();
-            
             const bookingsArray = Object.keys(bookings).map(key => ({
                 id: key,
                 ...bookings[key]
@@ -283,7 +316,6 @@ document.addEventListener('DOMContentLoaded', () => {
             bookingsArray.forEach(booking => {
                 if (booking.status === 'pending' || booking.status === 'under_review' || booking.status === 'pending_retry') {
                     pendingCount++;
-                    
                     const dateObj = new Date(booking.timestamp);
                     const timeString = dateObj.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
                     
@@ -309,15 +341,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
 
                         <div style="display:flex; gap:10px;">
-                            <button onclick="approvePayment('${booking.id}', this)" class="utr-btn btn-approve">
-                                ✓ Approve
-                            </button>
-                            <button onclick="declinePayment('${booking.id}', this)" class="utr-btn btn-decline">
-                                ✕ Decline
-                            </button>
+                            <button onclick="approvePayment('${booking.id}', this)" class="utr-btn btn-approve">✓ Approve</button>
+                            <button onclick="declinePayment('${booking.id}', this)" class="utr-btn btn-decline">✕ Decline</button>
                         </div>
-                    </div>
-                    `;
+                    </div>`;
                 } else if (booking.status === 'approved') {
                     approvedCount++;
                 }
@@ -328,10 +355,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div style="text-align:center; padding:40px 20px; background:#fff; border-radius:8px; border:1px dashed #ccc;">
                     <span style="font-size:30px;">☕</span>
                     <h3 style="margin:10px 0 5px; color:#333; font-size:16px;">All caught up!</h3>
-                    <p style="margin:0; color:#666; font-size:13px;">No pending UTR verifications right now.</p>
+                    <p style="margin:0; color:#666; font-size:13px;">No pending verifications right now.</p>
                 </div>`;
             }
-
             if(bookingsContainer) bookingsContainer.innerHTML = cardsHtml;
         } else {
             if(bookingsContainer) bookingsContainer.innerHTML = `
@@ -344,4 +370,5 @@ document.addEventListener('DOMContentLoaded', () => {
         if(pendingCountEl) pendingCountEl.innerText = pendingCount;
         if(approvedCountEl) approvedCountEl.innerText = approvedCount;
     });
-});
+
+}); // DOMContentLoaded khatam
