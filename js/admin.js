@@ -1,11 +1,10 @@
 // js/admin.js
-// 🔥 FIX: Added 'update' import here for the UTR approval logic
 import { db, ref, onValue, set, push, remove, update } from './firebase.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
     // ==========================================
-    // 🔐 SECURE LOGIN SYSTEM
+    // 🔐 SECURE LOGIN SYSTEM (Fixed & Tested)
     // ==========================================
     const loginScreen = document.getElementById('login-screen');
     const adminWrapper = document.getElementById('admin-wrapper');
@@ -15,29 +14,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const ADMIN_ID = "9680211974";
     const ADMIN_PASS = "Pooja2005";
 
+    // Agar pehle se login hai toh direct andar bhejo
     if (sessionStorage.getItem('adminLoggedIn') === 'true') {
         if(loginScreen) loginScreen.style.display = 'none';
         if(adminWrapper) adminWrapper.style.display = 'block';
     }
 
+    // Login Button Click Logic
     if (loginBtn) {
         loginBtn.addEventListener('click', () => {
-            const idVal = document.getElementById('admin-id').value;
-            const passVal = document.getElementById('admin-pass').value;
+            const idVal = document.getElementById('admin-id').value.trim();
+            const passVal = document.getElementById('admin-pass').value.trim();
 
             if (idVal === ADMIN_ID && passVal === ADMIN_PASS) {
                 sessionStorage.setItem('adminLoggedIn', 'true');
-                loginScreen.style.display = 'none';
-                adminWrapper.style.display = 'block';
+                if(loginScreen) loginScreen.style.display = 'none';
+                if(adminWrapper) adminWrapper.style.display = 'block';
             } else {
-                loginError.style.display = 'block';
-                setTimeout(() => { loginError.style.display = 'none'; }, 3000);
+                if(loginError) {
+                    loginError.style.display = 'block';
+                    setTimeout(() => { loginError.style.display = 'none'; }, 3000);
+                }
             }
         });
     }
 
     // ==========================================
-    // 📊 MATCH & PAYMENT LOGIC (Updated for Footer Logo)
+    // 📊 MATCH & PAYMENT LOGIC
     // ==========================================
     const form = document.getElementById('match-form');
     if (!form) return;
@@ -53,8 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const mTeam2 = document.getElementById('m-team2');
     const mBanner = document.getElementById('m-banner');      
     const mVenueImg = document.getElementById('m-venue-img'); 
-    
-    // 🚀 NEW: Footer Logo Input
     const mFooterLogo = document.getElementById('m-footer-logo'); 
 
     const upiInp = document.getElementById('admin-upi-id');
@@ -69,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let isEditing = false;
     let globalBannerUrl = ''; 
     let globalVenueUrl = '';  
-    let globalFooterLogoUrl = ''; // Master Footer Logo variable
+    let globalFooterLogoUrl = ''; 
 
     function showPreview(url, element) {
         if (element) {
@@ -87,19 +88,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if(mBanner) mBanner.addEventListener('input', () => showPreview(mBanner.value, bannerPreview));
     if(mVenueImg) mVenueImg.addEventListener('input', () => showPreview(mVenueImg.value, venuePreview));
 
-    // --- Auto-Load Global Settings (UPI, QR, Banner, Venue, Footer Logo) ---
+    // --- Auto-Load Global Settings ---
     onValue(ref(db, 'settings/payment'), (snap) => {
         if (snap.exists()) {
             const data = snap.val();
             if (upiInp && document.activeElement !== upiInp) upiInp.value = data.upiId || '';
             if (urlInp && document.activeElement !== urlInp) urlInp.value = data.qrUrl || '';
             
-            // Storing global links
             globalBannerUrl = data.globalBanner || '';
             globalVenueUrl = data.globalVenue || '';
             globalFooterLogoUrl = data.globalFooterLogo || '';
 
-            // Auto-fill form if NOT in edit mode
             if (!isEditing) {
                 if (mBanner && document.activeElement !== mBanner) {
                     mBanner.value = globalBannerUrl;
@@ -152,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
             qrUrl: urlInp ? urlInp.value.trim() : '',
             globalBanner: mBanner.value.trim(), 
             globalVenue: mVenueImg.value.trim(),
-            globalFooterLogo: mFooterLogo ? mFooterLogo.value.trim() : '' // 🚀 Saving Footer Logo
+            globalFooterLogo: mFooterLogo ? mFooterLogo.value.trim() : ''
         };
 
         try {
@@ -184,7 +183,6 @@ document.addEventListener('DOMContentLoaded', () => {
         mTeam2.value = m.team2 || ''; mBanner.value = m.banner || '';
         mVenueImg.value = m.venue_img || ''; 
         
-        // Also load the footer logo if we are editing
         if(mFooterLogo) mFooterLogo.value = globalFooterLogoUrl;
 
         showPreview(m.banner, bannerPreview);
@@ -263,19 +261,17 @@ document.addEventListener('DOMContentLoaded', () => {
         mTitle.addEventListener('change', checkAndFillTeamLogos);
     }
 
-
     // ==========================================
-    // 🔥 NEW: LIVE UTR APPROVALS LOGIC 🔥
+    // 🔥 LIVE UTR APPROVALS LOGIC 🔥
     // ==========================================
-    
     const bookingsContainer = document.getElementById('bookings-container');
     const pendingCountEl = document.getElementById('pending-count');
     const approvedCountEl = document.getElementById('approved-count');
     const loadingIndicator = document.getElementById('loading-indicator');
 
-    // Make functions global so HTML buttons can trigger them
+    // Make functions global
     window.approvePayment = function(bookingId, btnElement) {
-        if(confirm("Are you sure you want to APPROVE this payment? User will be redirected to success page.")) {
+        if(confirm("APPROVE this payment? User will be redirected to success page.")) {
             btnElement.innerHTML = "Approving...";
             btnElement.classList.add('btn-loading');
             
@@ -287,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.declinePayment = function(bookingId, btnElement) {
-        if(confirm("Are you sure you want to DECLINE this payment? User will be asked to re-enter UTR.")) {
+        if(confirm("DECLINE this payment? User will be asked to re-enter UTR.")) {
             btnElement.innerHTML = "Declining...";
             btnElement.classList.add('btn-loading');
             
@@ -298,7 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Listen to Firebase Bookings Collection in Real-time
+    // Listen to Bookings
     onValue(ref(db, 'bookings'), (snapshot) => {
         if (loadingIndicator) loadingIndicator.style.display = 'none';
         
@@ -309,24 +305,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (snapshot.exists()) {
             const bookings = snapshot.val();
             
-            // Convert object to array and sort by newest first
             const bookingsArray = Object.keys(bookings).map(key => ({
                 id: key,
                 ...bookings[key]
             })).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
             bookingsArray.forEach(booking => {
-                
-                // Track stats
                 if (booking.status === 'pending' || booking.status === 'under_review' || booking.status === 'pending_retry') {
                     pendingCount++;
                     
-                    // Format Date
                     const dateObj = new Date(booking.timestamp);
                     const timeString = dateObj.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
                     const dateString = dateObj.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
 
-                    // Build Card UI
                     cardsHtml += `
                     <div class="utr-card ${booking.status === 'under_review' ? 'under-review' : ''}">
                         <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
@@ -381,10 +372,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>`;
         }
 
-        // Update top stats
         if(pendingCountEl) pendingCountEl.innerText = pendingCount;
         if(approvedCountEl) approvedCountEl.innerText = approvedCount;
     });
 
 });
-                          
