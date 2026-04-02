@@ -3,7 +3,37 @@ import { db, ref, onValue } from "./firebase.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     
-    // Naye HTML ke hisaab se IDs select ki hain
+    // ==========================================
+    // 🔥 MASTER FIX: Tax Calculation ab Payment.js khud karega 🔥
+    // Taki browser ki history/cache ka koi chakkar hi na rahe!
+    // ==========================================
+    
+    let rawPrice = localStorage.getItem('pureBasePrice');
+    if(!rawPrice) {
+        // Agar pureBasePrice nahi hai, toh original final price uthao
+        rawPrice = localStorage.getItem('selectedTotalPrice') || localStorage.getItem('finalPrice') || "599";
+        // Asli bina tax wala price save kar lo, taki refresh karne par double tax na lage
+        localStorage.setItem('pureBasePrice', rawPrice); 
+    }
+
+    let basePrice = parseInt(rawPrice);
+    if (isNaN(basePrice) || basePrice <= 0) basePrice = 599;
+
+    // Same Taxes jo summary page par lage the
+    let handlingFee = Math.round(basePrice * 0.12);
+    let convenienceFee = Math.round(basePrice * 0.10);
+    let gst = Math.round(basePrice * 0.09);
+    
+    // Naya final price (Taxes ke sath)
+    let finalPrice = basePrice + handlingFee + convenienceFee + gst;
+
+    // LocalStorage update kar do taaki page me kahi aur (jaise Telegram) price jaye toh sahi jaye
+    localStorage.setItem('finalPrice', finalPrice);
+
+
+    // ==========================================
+    // HTML Elements Select Karna
+    // ==========================================
     const qrImg = document.getElementById('qr-code-img'); 
     const upiText = document.getElementById('upi-text'); 
     const upiInput = document.getElementById('upiID'); 
@@ -11,13 +41,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const paytmLink = document.getElementById('paytm-link');
     const priceDisplays = document.querySelectorAll('.final_paid_price');
     
-    // 🔥 FIX: Naya Tax wala price fetch karna 🔥 (Yeh sabse zaroori tha)
-    const finalPrice = localStorage.getItem('grandTotalPriceWithTaxes') || localStorage.getItem('finalPrice') || localStorage.getItem('selectedTotalPrice') || 0;
-
-    // UI me price update karna
+    // UI me price update karna (Scren par aate hi naya tax wala price dikhega)
     priceDisplays.forEach(el => el.innerText = '₹' + finalPrice);
 
+    // ==========================================
     // Firebase se QR/UPI settings fetch karna
+    // ==========================================
     onValue(ref(db, 'settings/payment'), (snap) => {
         if (snap.exists()) {
             const data = snap.val();
@@ -41,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     p2pPaymentCheckoutParams: {
                         note: "Secure Payment",
                         isByDefaultKnownContact: true,
-                        initialAmount: Number(finalPrice) * 100, // Amount paiso me convert hota hai
+                        initialAmount: Number(finalPrice) * 100, // Paise me
                         currency: "INR",
                         checkoutType: "DEFAULT",
                         transactionContext: "p2p"
@@ -72,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ==========================================
-    // 🔥 POPUP MODAL LOGIC (Important Note / View Details)
+    // 🔥 POPUP MODAL LOGIC
     // ==========================================
     const popup = document.getElementById('tnc-modal');
     const viewDetailsBtn = document.getElementById('view-details-btn');
@@ -86,24 +115,21 @@ document.addEventListener("DOMContentLoaded", () => {
         if (popup) popup.classList.remove('active');
     };
 
-    // Modal ke bahar click karne par band karna
     if (popup) {
         popup.addEventListener('click', (e) => {
             if (e.target === popup) closePopup();
         });
     }
 
-    // "Okay, Got It" button par click karne se popup band hoga
     if (acceptBtn) {
         acceptBtn.onclick = () => {
             closePopup();
         };
     }
 
-    // "View Details" click par popup open karna
     if (viewDetailsBtn) {
         viewDetailsBtn.onclick = (e) => {
-            e.preventDefault(); // Page ko scroll hone se rokne ke liye
+            e.preventDefault(); 
             window.openTnc();
         };
     }
