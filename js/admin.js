@@ -345,4 +345,3 @@ document.addEventListener('DOMContentLoaded', () => {
         if(approvedCountEl) approvedCountEl.innerText = approvedCount;
     });
 });
-            
