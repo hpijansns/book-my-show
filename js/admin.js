@@ -2,42 +2,6 @@
 import { db, ref, onValue, set, push, remove, update } from './firebase.js';
 
 // ==========================================
-// 🔐 SECURE LOGIN SYSTEM (100% Fixed & Active)
-// ==========================================
-const loginScreen = document.getElementById('login-screen');
-const adminWrapper = document.getElementById('admin-wrapper');
-const loginError = document.getElementById('login-error');
-const loginBtn = document.getElementById('login-btn');
-
-const ADMIN_ID = "9680211974";
-const ADMIN_PASS = "Pooja2005";
-
-// Check if already logged in
-if (sessionStorage.getItem('adminLoggedIn') === 'true') {
-    if(loginScreen) loginScreen.style.display = 'none';
-    if(adminWrapper) adminWrapper.style.display = 'block';
-}
-
-// Login Button Click Event
-if (loginBtn) {
-    loginBtn.addEventListener('click', () => {
-        const idVal = document.getElementById('admin-id').value.trim();
-        const passVal = document.getElementById('admin-pass').value.trim();
-
-        if (idVal === ADMIN_ID && passVal === ADMIN_PASS) {
-            sessionStorage.setItem('adminLoggedIn', 'true');
-            if(loginScreen) loginScreen.style.display = 'none';
-            if(adminWrapper) adminWrapper.style.display = 'block';
-        } else {
-            if(loginError) {
-                loginError.style.display = 'block';
-                setTimeout(() => { loginError.style.display = 'none'; }, 3000);
-            }
-        }
-    });
-}
-
-// ==========================================
 // 📊 MATCH & PAYMENT LOGIC
 // ==========================================
 const form = document.getElementById('match-form');
