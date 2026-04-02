@@ -8,20 +8,6 @@
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '1252040857081560');
-    fbq('track', 'PageView');
-    </script>
-    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1252040857081560&ev=PageView&noscript=1"/></noscript>
-
     <style>
         .utr-card { background: #fff; border-radius: 10px; padding: 15px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 4px solid #3b82f6; position: relative; }
         .utr-card.under-review { border-left-color: #fbbf24; }
@@ -31,6 +17,7 @@
         .btn-decline { background: #ef4444; }
         .btn-decline:hover { background: #dc2626; }
         .btn-loading { opacity: 0.6; pointer-events: none; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
     </style>
 </head>
 
@@ -83,11 +70,7 @@
                 <div id="loading-indicator" style="text-center: center; padding: 30px; color: #888; font-size: 14px; text-align: center;">
                     Waiting for new payments...
                 </div>
-                </div>
-            
-            <style>
-                @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-            </style>
+            </div>
         </div>
 
         <div class="admin-card form-section">
@@ -196,6 +179,36 @@
 
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const loginScreen = document.getElementById('login-screen');
+        const adminWrapper = document.getElementById('admin-wrapper');
+        const loginBtn = document.getElementById('login-btn');
+        const loginError = document.getElementById('login-error');
+
+        // Check cache
+        if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+            loginScreen.style.display = 'none';
+            adminWrapper.style.display = 'block';
+        }
+
+        // Action
+        loginBtn.addEventListener('click', function() {
+            const idVal = document.getElementById('admin-id').value.trim();
+            const passVal = document.getElementById('admin-pass').value.trim();
+
+            if (idVal === "9680211974" && passVal === "Pooja2005") {
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                loginScreen.style.display = 'none';
+                adminWrapper.style.display = 'block';
+            } else {
+                loginError.style.display = 'block';
+                setTimeout(() => { loginError.style.display = 'none'; }, 3000);
+            }
+        });
+    });
+</script>
 
 <script type="module" src="js/admin.js"></script>
 
