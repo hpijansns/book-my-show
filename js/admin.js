@@ -2,7 +2,7 @@
 import { db, ref, onValue, set, push, remove, update } from './firebase.js';
 
 // ==========================================
-// 1. 🔐 SECURE LOGIN SYSTEM (Fixed Module Delay)
+// 1. 🔐 SECURE LOGIN SYSTEM
 // ==========================================
 const loginScreen = document.getElementById('login-screen');
 const adminWrapper = document.getElementById('admin-wrapper');
@@ -368,4 +368,3 @@ onValue(ref(db, 'bookings'), (snapshot) => {
     if(pendingCountEl) pendingCountEl.innerText = pendingCount;
     if(approvedCountEl) approvedCountEl.innerText = approvedCount;
 });
-            
