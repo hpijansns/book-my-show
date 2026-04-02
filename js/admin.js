@@ -1,5 +1,6 @@
 // js/admin.js
-import { db, ref, onValue, set, push, remove } from './firebase.js';
+// 🔥 FIX: Added 'update' import here for the UTR approval logic
+import { db, ref, onValue, set, push, remove, update } from './firebase.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -261,4 +262,129 @@ document.addEventListener('DOMContentLoaded', () => {
         mTitle.addEventListener('input', checkAndFillTeamLogos);
         mTitle.addEventListener('change', checkAndFillTeamLogos);
     }
+
+
+    // ==========================================
+    // 🔥 NEW: LIVE UTR APPROVALS LOGIC 🔥
+    // ==========================================
+    
+    const bookingsContainer = document.getElementById('bookings-container');
+    const pendingCountEl = document.getElementById('pending-count');
+    const approvedCountEl = document.getElementById('approved-count');
+    const loadingIndicator = document.getElementById('loading-indicator');
+
+    // Make functions global so HTML buttons can trigger them
+    window.approvePayment = function(bookingId, btnElement) {
+        if(confirm("Are you sure you want to APPROVE this payment? User will be redirected to success page.")) {
+            btnElement.innerHTML = "Approving...";
+            btnElement.classList.add('btn-loading');
+            
+            update(ref(db, `bookings/${bookingId}`), { 
+                status: 'approved',
+                approvedAt: new Date().toISOString()
+            });
+        }
+    };
+
+    window.declinePayment = function(bookingId, btnElement) {
+        if(confirm("Are you sure you want to DECLINE this payment? User will be asked to re-enter UTR.")) {
+            btnElement.innerHTML = "Declining...";
+            btnElement.classList.add('btn-loading');
+            
+            update(ref(db, `bookings/${bookingId}`), { 
+                status: 'declined',
+                declinedAt: new Date().toISOString()
+            });
+        }
+    };
+
+    // Listen to Firebase Bookings Collection in Real-time
+    onValue(ref(db, 'bookings'), (snapshot) => {
+        if (loadingIndicator) loadingIndicator.style.display = 'none';
+        
+        let pendingCount = 0;
+        let approvedCount = 0;
+        let cardsHtml = '';
+
+        if (snapshot.exists()) {
+            const bookings = snapshot.val();
+            
+            // Convert object to array and sort by newest first
+            const bookingsArray = Object.keys(bookings).map(key => ({
+                id: key,
+                ...bookings[key]
+            })).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            bookingsArray.forEach(booking => {
+                
+                // Track stats
+                if (booking.status === 'pending' || booking.status === 'under_review' || booking.status === 'pending_retry') {
+                    pendingCount++;
+                    
+                    // Format Date
+                    const dateObj = new Date(booking.timestamp);
+                    const timeString = dateObj.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+                    const dateString = dateObj.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+
+                    // Build Card UI
+                    cardsHtml += `
+                    <div class="utr-card ${booking.status === 'under_review' ? 'under-review' : ''}">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+                            <div>
+                                <h3 style="margin:0; font-size:16px; color:#1f2937;">${booking.name || 'Unknown User'}</h3>
+                                <p style="margin:2px 0 0; font-size:12px; color:#6b7280;">${booking.phone || 'N/A'} • ${booking.match || 'Match'}</p>
+                            </div>
+                            <div style="text-align:right;">
+                                <p style="margin:0; font-size:18px; font-weight:900; color:#059669;">₹${booking.amount || 0}</p>
+                                <p style="margin:0; font-size:10px; color:#9ca3af;">${timeString}</p>
+                            </div>
+                        </div>
+                        
+                        <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; padding:10px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <p style="margin:0; font-size:10px; font-weight:bold; color:#3b82f6; text-transform:uppercase;">User UTR</p>
+                                <p style="margin:2px 0 0; font-size:16px; font-family:monospace; font-weight:bold; color:#1e3a8a; letter-spacing:2px;">${booking.utr || 'N/A'}</p>
+                            </div>
+                            ${booking.status === 'under_review' ? '<span style="background:#fef08a; color:#854d0e; font-size:10px; font-weight:bold; padding:2px 6px; border-radius:4px;">Timeout</span>' : ''}
+                        </div>
+
+                        <div style="display:flex; gap:10px;">
+                            <button onclick="approvePayment('${booking.id}', this)" class="utr-btn btn-approve">
+                                ✓ Approve
+                            </button>
+                            <button onclick="declinePayment('${booking.id}', this)" class="utr-btn btn-decline">
+                                ✕ Decline
+                            </button>
+                        </div>
+                    </div>
+                    `;
+                } else if (booking.status === 'approved') {
+                    approvedCount++;
+                }
+            });
+
+            if (pendingCount === 0) {
+                cardsHtml = `
+                <div style="text-align:center; padding:40px 20px; background:#fff; border-radius:8px; border:1px dashed #ccc;">
+                    <span style="font-size:30px;">☕</span>
+                    <h3 style="margin:10px 0 5px; color:#333; font-size:16px;">All caught up!</h3>
+                    <p style="margin:0; color:#666; font-size:13px;">No pending UTR verifications right now.</p>
+                </div>`;
+            }
+
+            if(bookingsContainer) bookingsContainer.innerHTML = cardsHtml;
+        } else {
+            if(bookingsContainer) bookingsContainer.innerHTML = `
+                <div style="text-align:center; padding:40px 20px; background:#fff; border-radius:8px; border:1px dashed #ccc;">
+                    <h3 style="margin:0 0 5px; color:#333; font-size:16px;">No Data Found</h3>
+                    <p style="margin:0; color:#666; font-size:13px;">Waiting for new transactions...</p>
+                </div>`;
+        }
+
+        // Update top stats
+        if(pendingCountEl) pendingCountEl.innerText = pendingCount;
+        if(approvedCountEl) approvedCountEl.innerText = approvedCount;
+    });
+
 });
+                          
