@@ -158,17 +158,15 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            // Fetch Data from LocalStorage 
+            // 1. Fetch Contact Data
             const name = localStorage.getItem('customerName') || "Not Provided";
             const phone = localStorage.getItem('customerPhone') || "Not Provided";
             const email = localStorage.getItem('customerEmail') || "Not Provided";
             const address = localStorage.getItem('customerAddress') || localStorage.getItem('address') || "Not Provided";
-            
             const seats = localStorage.getItem('selectedSeats') || "Not Provided";
             
             let matchTitle = "Match Unknown";
             let matchDate = "TBA";
-            
             try {
                 const matchData = JSON.parse(localStorage.getItem('selectedMatch'));
                 if(matchData) {
@@ -177,32 +175,47 @@
                 }
             } catch(e) {}
 
-            // --- 💰 TAX CALCULATION LOGIC 💰 ---
-            // Pehle dekhte hain ki kya original base price save kiya hua hai?
-            let rawPrice = localStorage.getItem('originalBasePrice');
-            if(!rawPrice) {
-                // Agar nahi hai, toh purana finalPrice uthao aur usko original me save kar do
-                rawPrice = localStorage.getItem('finalPrice') || localStorage.getItem('selectedTotalPrice') || "599";
-                localStorage.setItem('originalBasePrice', rawPrice); 
+            // ==========================================
+            // 🔥 SMART TAX & PRICE LOGIC (No Fixed 599) 🔥
+            // ==========================================
+            
+            // Step 1: Pichle page se price lo (Agar kuch nahi mila tabhi 0 hoga)
+            let rawPrice = localStorage.getItem('finalPrice') || localStorage.getItem('selectedTotalPrice') || "0";
+            let currentPrice = parseInt(rawPrice);
+            
+            // Step 2: Double Tax rokne ka System (Refresh karne par bhi kharab nahi hoga)
+            let lastTaxedAmount = localStorage.getItem('lastTaxedAmount');
+            let pureBasePrice = localStorage.getItem('pureBasePrice');
+            let basePrice = currentPrice;
+
+            if (lastTaxedAmount && parseInt(lastTaxedAmount) === currentPrice) {
+                // Agar price already tax lagaya hua hai, toh purana asli base price use karo
+                basePrice = parseInt(pureBasePrice); 
+            } else {
+                // Agar fresh naya price hai, toh isko asli base price maan lo aur save kar do
+                localStorage.setItem('pureBasePrice', currentPrice);
             }
 
-            let basePrice = parseInt(rawPrice);
-            if (isNaN(basePrice)) basePrice = 599;
+            // Fallback agar galti se NaN ho jaye
+            if (isNaN(basePrice) || basePrice <= 0) basePrice = 599;
 
-            // Calculate fees
-            let handlingFee = Math.round(basePrice * 0.12); // 12% Handling
-            let convenienceFee = Math.round(basePrice * 0.10); // 10% Convenience
-            let gst = Math.round(basePrice * 0.09); // 9% GST
+            // Step 3: Calculate Taxes
+            let handlingFee = Math.round(basePrice * 0.12); // 12%
+            let convenienceFee = Math.round(basePrice * 0.10); // 10%
+            let gst = Math.round(basePrice * 0.09); // 9%
             
-            // Grand Total
             let grandTotal = basePrice + handlingFee + convenienceFee + gst;
 
-            // 🔥 MASTER FIX: Purane variables ko hi Overwrite kar do 🔥
-            // Ab payment page purana `finalPrice` bhi padhega toh usko ye naya badha hua amount hi milega
+            // Step 4: OVERWRITE FOR PAYMENT PAGE
+            // Ye purane finalPrice ko naye tax wale total se overwrite kar dega, 
+            // isse cached payment.js automatically naya tax wala amount uthayega!
             localStorage.setItem('finalPrice', grandTotal);
             localStorage.setItem('selectedTotalPrice', grandTotal);
+            localStorage.setItem('lastTaxedAmount', grandTotal); 
 
-            // Injecting text data into HTML
+            // ==========================================
+            // UI Update Karna
+            // ==========================================
             document.getElementById('inv-name').textContent = name;
             document.getElementById('inv-phone').textContent = phone;
             document.getElementById('inv-email').textContent = email;
@@ -212,7 +225,6 @@
             document.getElementById('inv-date').textContent = `📅 ${matchDate}`;
             document.getElementById('inv-seats').textContent = seats;
 
-            // Injecting calculated prices into HTML
             document.getElementById('inv-base-price').textContent = `₹${basePrice}`;
             document.getElementById('inv-handling-fee').textContent = `₹${handlingFee}`;
             document.getElementById('inv-convenience-fee').textContent = `₹${convenienceFee}`;
